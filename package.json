@@ -1,0 +1,39 @@
+{
+  "name": "agenda-de-tarefas-back",
+  "version": "1.0.0",
+  "description": "Este repositório é a implementação do back-end da disciplina de desenvolvimento móvel - OPT002",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "ts-node-dev ./src/main.ts",
+    "start:watch": "tsx watch src/server.ts",
+    "start:dist": "npm run dist && node dist/src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joaoPAndrade/agenda-de-tarefas-back.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joaoPAndrade/agenda-de-tarefas-back/issues"
+  },
+  "homepage": "https://github.com/joaoPAndrade/agenda-de-tarefas-back#readme",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/module-alias": "^2.0.4",
+    "@types/node": "^22.10.1",
+    "prisma": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.0.1",
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "module-alias": "^2.2.3"
+  }
+}
