@@ -4,10 +4,9 @@
   "description": "Este repositório é a implementação do back-end da disciplina de desenvolvimento móvel - OPT002",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev": "ts-node-dev ./src/main.ts",
-    "start:watch": "tsx watch src/server.ts",
-    "start:dist": "npm run dist && node dist/src/index.js"
+    "build": "tsc",
+    "start": "npm run build && node dist/server.js",
+    "dev": "ts-node-dev 'src/server.ts'"
   },
   "repository": {
     "type": "git",
@@ -33,7 +32,6 @@
     "@prisma/client": "^6.0.1",
     "body-parser": "^1.20.3",
     "dotenv": "^16.4.5",
-    "express": "^4.21.1",
-    "module-alias": "^2.2.3"
+    "express": "^4.21.1"
   }
 }

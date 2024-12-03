@@ -1,4 +1,3 @@
-import './util/module-alias';
 import express from 'express';
 import bodyParser from 'body-parser';
 import { Server } from 'http';
