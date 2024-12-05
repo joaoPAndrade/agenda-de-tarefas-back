@@ -3,6 +3,8 @@ class Routes {
     static define(router: Router): Router { 
         // Colocar aqui as rotas da API 
 
+        
+
         return router;
     }
 }
