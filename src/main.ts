@@ -1,7 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import { Server as HttpServer } from 'http';
-import router from './routes';
+import router from './routes/index';
+import cors from 'cors';
 
 export class SetupApplication {
   private server?: HttpServer;
@@ -18,6 +19,7 @@ export class SetupApplication {
   }
 
   private setupExpress(): void {
+    this.app.use(cors())
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: true }));
   }
