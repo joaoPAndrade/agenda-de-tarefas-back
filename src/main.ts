@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import { Server as HttpServer } from 'http';
 import router from './routes/index';
 import cors from 'cors';
+import 'dotenv/config';
 
 export class SetupApplication {
   private server?: HttpServer;

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "npm run build && node dist/main.js",
-    "dev": "ts-node-dev 'src/main.ts'"
+    "dev": "ts-node-dev src/main.ts"
   },
   "repository": {
     "type": "git",
@@ -33,7 +33,8 @@
     "@prisma/client": "^6.0.1",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.1"
+    "dotenv": "^16.4.7",
+    "express": "^4.21.1",
+    "joi": "^17.13.3"
   }
 }

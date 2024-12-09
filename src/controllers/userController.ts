@@ -1,16 +1,18 @@
 import { Request, Response } from 'express';
+import userService from '../services/userService';
 
 class UserController {
 
     public getUser (req: Request, res: Response): void {
-    
-        //TODO: chamar o userSerivce
+        userService.getAllUsers();
     
     }
 
     public getUserById (req: Request, res: Response): void {
 
         const { id } = req.params;
+
+        
 
     }
 
