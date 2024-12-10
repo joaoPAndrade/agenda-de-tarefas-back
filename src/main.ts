@@ -7,6 +7,10 @@ import 'dotenv/config';
 import { prisma } from "../prisma/client"
 
 
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 export class SetupApplication {
   private server?: HttpServer;
 
