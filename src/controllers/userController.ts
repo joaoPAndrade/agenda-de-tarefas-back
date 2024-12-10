@@ -11,13 +11,17 @@ class UserController {
     }
 
     public async getUserById (req: Request, res: Response): Promise<void> {
-
         const { id } = req.params;
         const intId = parseInt(id);
 
-        const user = await userService.getUserById(intId);
+        const result = await userService.getUserById(intId);
 
-        res.status(200).send(user);
+        if(result.error){
+            res.status(400).send({error: result.error});
+        } else {
+            res.status(200).send(result.user);
+        }
+
 
     }
 
@@ -25,39 +29,48 @@ class UserController {
 
         const userData = req.body
 
-        const newUser = await userService.createUser(userData);
+        const result = await userService.createUser(userData);
 
-        res.status(201).send(newUser);
+        if(result.error){
+            res.status(400).send({error: result.error})
+        }else {
+            res.status(201).send(result.user);
+        }
+
 
     }
 
     public async updateUser(req: Request, res: Response): Promise<void> {
-
         const { id } = req.params;
+        const intId = parseInt(id);
         const userData = req.body;
 
-        const intId = parseInt(id);
+        if(isNaN(intId)){
+            res.status(400).send({error : 'Invalid user ID'});
+            return
+        }
 
-        const updatedUser = await userService.updateUser(intId, userData);
+        const result = await userService.updateUser(intId, userData);
 
-        res.status(200).send(updatedUser);
-
+        if(result.error) {
+            res.status(400).send({ error: result.error });
+        } else {
+            res.status(200).send(result.user);
+        }
+            
     }
 
     public async deleteUser(req: Request, res: Response): Promise<void> {
-
         const { id } = req.params;
-
         const intId = parseInt(id);
 
-        try {
-            await userService.deleteUser(intId);
-            res.status(200).send({ message: 'User deleted successfully' });
-        } catch (error) {
-            res.status(500).send({ error: 'Failed to delete user' });
-        }
-        
+        const result = await userService.deleteUser(intId);
 
+        if(result.error){
+            res.status(500).send({ error: result.error });
+        } else {
+            res.status(200).send({ message: 'User deleted successfully' });
+        }
     }
 }
 

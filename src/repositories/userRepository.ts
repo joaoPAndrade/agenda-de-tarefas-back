@@ -1,3 +1,4 @@
+import { User } from '@prisma/client';
 import { prisma } from '../../prisma/client';
 
 class UserRepository {
@@ -14,7 +15,7 @@ class UserRepository {
         });
     }
 
-    public async deleteUser(id: number) {
+    public async deleteUser(id: number): Promise<User> {
         return await prisma.user.delete({
             where: { id }
         });
@@ -31,6 +32,11 @@ class UserRepository {
         return await prisma.user.findUnique({
             where: { id }
         });
+    }
+    public async findUserByEmail(email: string) {
+        return await prisma.user.findUnique({
+            where: {email}
+        })
     }
 }
 

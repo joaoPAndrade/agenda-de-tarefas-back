@@ -2,9 +2,9 @@ import userRepository from '../repositories/userRepository';
 import { partialUserSchema, userSchema } from '../validation/userValidationSchema';
 
 interface User{
-    email: String;
-    name: String;
-    senha: String;
+    email: string;
+    name: string;
+    senha: string;
 }
 class UserService{
     public async getAllUsers(){
@@ -13,47 +13,60 @@ class UserService{
         return users
     }
 
-    public async getUserById(id: number){
+    public async getUserById(id: number): Promise<{error?: string, user?: User}>{
         const user = await userRepository.findUserById(id);
 
         if(!user){
-            throw new Error(`User with id ${id} not found!`);
+            return{error: `User with id ${id} not found!`};
         }   
 
-        return user;
+        return {user: user};
     }
 
-    public async createUser(newUser: User){
+    public async createUser(newUser: User): Promise<{error?: string, user?: User}>{
 
         const { error } = userSchema.validate(newUser);
 
         if(error){
-            throw new Error(`Validation error: ${error.details[0].message}`);
+            return { error: `Validation error: ${error.details[0].message}`}
         }
 
-        return await userRepository.createUser(newUser);
+        const emailAlreadyExists = await userRepository.findUserByEmail(newUser.email);
+
+        if(emailAlreadyExists != null){
+            return { error: 'A user with this email is already registered'}
+        }
+
+        const createdUser = await userRepository.createUser(newUser); 
+
+        return {user: createdUser};
 
     }
 
-    public async updateUser(id: number, data: Partial<User>){
+    public async updateUser(id: number, data: Partial<User>): Promise<{ error?: string, user?: User }> {
         const { error } = partialUserSchema.validate(data);
         if (error) {
-            throw new Error(`Validation error: ${error.details[0].message}`);
+            return { error: `Validation error: ${error.details[0].message}` };
         }
-
+    
         const user = await userRepository.findUserById(id);
-        if(!user){
-            throw new Error(`User with id ${id} not found!`);
+        if (!user) {
+            return { error: `User with id ${id} not found!` };
         }
-        return await userRepository.updateUser(id, data);
+    
+        const updatedUser = await userRepository.updateUser(id, data);
+        return { user: updatedUser };
     }
 
-    public async deleteUser(id: number){
+    public async deleteUser(id: number): Promise<{error?: string, user?: User}> {
         const user = await userRepository.findUserById(id);
         if(!user){
-            throw new Error(`User with id ${id} not found!`);
+            return { error: `User with id ${id} not found!`}
         }
-        return await userRepository.deleteUser(id);
+
+        const deletedUser = await userRepository.deleteUser(id);
+        
+        return { user: deletedUser };
     }
 }
 
