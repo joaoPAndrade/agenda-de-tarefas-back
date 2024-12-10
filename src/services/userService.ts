@@ -8,6 +8,7 @@ interface User{
 }
 class UserService{
     public async getAllUsers(){
+
         return userRepository.findAllUsers()
     }
 
@@ -47,12 +48,11 @@ class UserService{
     }
 
     public async deleteUser(id: number){
-
         const user = await userRepository.findUserById(id);
-        if (!user) {
-            throw new Error(`User with ID ${id} not found`);
+        if(!user){
+            throw new Error(`User with id ${id} not found!`);
         }
-        return user;
+        return userRepository.deleteUser(id);
     }
 }
 

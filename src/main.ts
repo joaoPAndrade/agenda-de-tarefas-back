@@ -4,15 +4,28 @@ import { Server as HttpServer } from 'http';
 import router from './routes/index';
 import cors from 'cors';
 import 'dotenv/config';
+import { prisma } from "../prisma/client"
+
 
 export class SetupApplication {
   private server?: HttpServer;
 
-  constructor(private port = 3000, public app = express()) { }
+  constructor(private port = 3333, public app = express()) { }
 
-  public init(): void {
+  public async init(): Promise<void> {
+    await this.connectToDatabase();
     this.setupExpress();
     this.setupRoutes();
+  }
+
+  private async connectToDatabase(): Promise<void> {
+    try {
+      await prisma.$connect();
+      console.log('Connected to the database');
+    } catch (error) {
+      console.error('Failed to connect to the database', error);
+      process.exit(1); // Exit the process with failure
+    }
   }
 
   private setupRoutes(): void {
