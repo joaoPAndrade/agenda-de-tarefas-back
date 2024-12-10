@@ -3,42 +3,42 @@ import userService from '../services/userService';
 
 class UserController {
 
-    public getUser (req: Request, res: Response): void {
+    public async getUser (req: Request, res: Response): Promise<void> {
 
-        const users = userService.getAllUsers();
+        const users = await userService.getAllUsers();
         res.status(200).send(users);
 
     }
 
-    public getUserById (req: Request, res: Response): void {
+    public async getUserById (req: Request, res: Response): Promise<void> {
 
         const { id } = req.params;
         const intId = parseInt(id);
 
-        const user = userService.getUserById(intId);
+        const user = await userService.getUserById(intId);
 
         res.status(200).send(user);
 
     }
 
-    public createUser(req: Request, res: Response): void {
+    public async createUser(req: Request, res: Response): Promise<void> {
 
         const userData = req.body
 
-        const newUser = userService.createUser(userData);
+        const newUser = await userService.createUser(userData);
 
         res.status(201).send(newUser);
 
     }
 
-    public updateUser(req: Request, res: Response): void{
+    public async updateUser(req: Request, res: Response): Promise<void> {
 
         const { id } = req.params;
         const userData = req.body;
 
         const intId = parseInt(id);
 
-        const updatedUser = userService.updateUser(intId, userData);
+        const updatedUser = await userService.updateUser(intId, userData);
 
         res.status(200).send(updatedUser);
 

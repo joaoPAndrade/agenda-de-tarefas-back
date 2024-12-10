@@ -9,7 +9,8 @@ interface User{
 class UserService{
     public async getAllUsers(){
 
-        return userRepository.findAllUsers()
+        const users = await userRepository.findAllUsers();
+        return users
     }
 
     public async getUserById(id: number){
@@ -30,7 +31,7 @@ class UserService{
             throw new Error(`Validation error: ${error.details[0].message}`);
         }
 
-        return userRepository.createUser(newUser);
+        return await userRepository.createUser(newUser);
 
     }
 
@@ -44,7 +45,7 @@ class UserService{
         if(!user){
             throw new Error(`User with id ${id} not found!`);
         }
-        return userRepository.updateUser(id, data);
+        return await userRepository.updateUser(id, data);
     }
 
     public async deleteUser(id: number){
@@ -52,7 +53,7 @@ class UserService{
         if(!user){
             throw new Error(`User with id ${id} not found!`);
         }
-        return userRepository.deleteUser(id);
+        return await userRepository.deleteUser(id);
     }
 }
 

@@ -2,30 +2,33 @@ import { prisma } from '../../prisma/client';
 
 class UserRepository {
     public async createUser(newUser: any) {
-        return prisma.user.create({
+        return await prisma.user.create({
             data: newUser
         });
     }
 
     public async updateUser(id: number, data: any) {
-        return prisma.user.update({
+        return await prisma.user.update({
             where: { id },
             data: data
         });
     }
 
     public async deleteUser(id: number) {
-        return prisma.user.delete({
+        return await prisma.user.delete({
             where: { id }
         });
     }
 
     public async findAllUsers() {
-        return prisma.user.findMany();
+
+        const users = await prisma.user.findMany();
+
+        return users
     }
 
     public async findUserById(id: number) {
-        return prisma.user.findUnique({
+        return await prisma.user.findUnique({
             where: { id }
         });
     }
