@@ -2,19 +2,21 @@ import { Router, Request, Response, RequestHandler } from 'express';
 import userController from '../controllers/userController';
 import authService from '../services/authService';
 
-const handlerLogin: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+const handlerLogin: RequestHandler = async (req: Request, res: Response): Promise<any> => {
     try {
-        const { error, token } = await authService.authenticateUser(req.body.email, req.body.senha);
+        const { error, token, email } = await authService.authenticateUser(req.body.email, req.body.senha);
 
         if (error) {
-            res.status(401).json({ error });
+            return res.status(401).json({ error }); 
         }
 
-        res.status(200).json({ token });
+        return res.status(200).json({ token, email });
     } catch (err) {
-        res.status(500).json({ error: 'server error' });
+        return res.status(500).json({ error: 'Server error' });
     }
 };
+
+
 
 class Routes {
     static define(router: Router): Router { 
@@ -22,6 +24,7 @@ class Routes {
         router.get('/user', userController.getUser);
 
         router.get('/user/:id', userController.getUserById)
+        router.get('/user/email/:email', userController.findUserByEmail)
 
         router.post('/user', userController.createUser);
 

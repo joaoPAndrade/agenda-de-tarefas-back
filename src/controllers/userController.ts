@@ -34,7 +34,7 @@ class UserController {
         if(result.error){
             res.status(400).send({error: result.error})
         }else {
-            res.status(201).send(result.user);
+            res.status(201).send({user: result.user, token:result.token});
         }
 
 
@@ -70,6 +70,22 @@ class UserController {
             res.status(500).send({ error: result.error });
         } else {
             res.status(200).send({ message: 'User deleted successfully' });
+        }
+    }
+    public async findUserByEmail(req: Request, res: Response): Promise<void> {
+        const { email } = req.params;
+        try {
+            const result = await userService.getUserByEmail(email);
+    
+            if (result.error) {
+                res.status(500).send({ error: result.error });
+            } else if (!result) {
+                res.status(404).send({ message: 'User not found' });
+            } else {
+                res.status(200).send(result);
+            }
+        } catch (error) {
+            res.status(500).send({ error: 'Internal server error' });
         }
     }
 }
