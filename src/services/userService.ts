@@ -1,6 +1,7 @@
 import userRepository from '../repositories/userRepository';
 import { partialUserSchema, userSchema } from '../validation/userValidationSchema';
-
+import jwt from 'jsonwebtoken';
+import config from '../config';
 interface User{
     email: string;
     name: string;
@@ -23,25 +24,26 @@ class UserService{
         return {user: user};
     }
 
-    public async createUser(newUser: User): Promise<{error?: string, user?: User}>{
-
+    public async createUser(newUser: User): Promise<{ error?: string, user?: User; token?: string }> {
         const { error } = userSchema.validate(newUser);
-
-        if(error){
-            return { error: `Validation error: ${error.details[0].message}`}
+    
+        if (error) {
+            return { error: `Validation error: ${error.details[0].message}` };
         }
-
+    
         const emailAlreadyExists = await userRepository.findUserByEmail(newUser.email);
-
-        if(emailAlreadyExists != null){
-            return { error: 'A user with this email is already registered'}
+    
+        if (emailAlreadyExists != null) {
+            return { error: 'A user with this email is already registered' };
         }
-
+    
         const createdUser = await userRepository.createUser(newUser); 
-
-        return {user: createdUser};
-
+    
+        const token = jwt.sign({ id: createdUser.id, email: createdUser.email }, config.jwtSecret, { expiresIn: '1h' });
+    
+        return { user: createdUser, token };
     }
+    
 
     public async updateUser(id: number, data: Partial<User>): Promise<{ error?: string, user?: User }> {
         const { error } = partialUserSchema.validate(data);
@@ -67,6 +69,20 @@ class UserService{
         const deletedUser = await userRepository.deleteUser(id);
         
         return { user: deletedUser };
+    }
+    public async getUserByEmail(email: string): Promise<{ error?: string; user?: User }> {
+        try {
+            const user = await userRepository.findUserByEmail(email);
+
+            if (!user) {
+                return { error: `User with email ${email} not found!` }; 
+            }
+
+            return { user }; 
+        } catch (error) {
+            console.error(error);
+            return { error: 'Server error' }; 
+        }
     }
 }
 
