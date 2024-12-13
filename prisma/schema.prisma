@@ -20,3 +20,53 @@ model User {
    senha String
 }
 
+model Tarefa {
+  id            String          @id @default(uuid()) // PK
+  titulo        String          @db.VarChar(30)
+  comentarios   String?         @db.Text
+  descricao     String?         @db.Text
+  dono          String          @db.VarChar(50)
+  dataCriacao   DateTime        @default(now())
+  dataTarefa    DateTime
+  dataConclusao DateTime?
+  ehRecorrente  Boolean
+  prioridade    Prioridade
+  status        Status
+
+  categorias    TarefaCategoria[]
+
+  @@map("tarefa") 
+}
+
+model Categoria {
+  id   String          @id @default(uuid()) // PK
+  nome String          @db.VarChar(200)
+
+  
+  tarefas TarefaCategoria[]
+
+  @@map("categoria") 
+}
+
+model TarefaCategoria {
+  tarefaId    String  
+  categoriaId String  
+
+  tarefa      Tarefa   @relation(fields: [tarefaId], references: [id], onDelete: Cascade)
+  categoria   Categoria @relation(fields: [categoriaId], references: [id], onDelete: Cascade)
+
+  @@id([tarefaId, categoriaId]) 
+  @@map("tarefa_categoria") 
+}
+
+enum Prioridade {
+  BAIXA
+  MEDIA
+  ALTA
+}
+
+enum Status {
+  PENDENTE
+  EM_PROGRESSO
+  CONCLUIDA
+}
