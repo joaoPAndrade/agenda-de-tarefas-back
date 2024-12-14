@@ -23,9 +23,7 @@ class TarefaRepository {
 
     public async findAllTarefas(): Promise<Tarefa[]> {
 
-        const tarefas = await prisma.tarefa.findMany()
-
-        return tarefas;
+        return await prisma.tarefa.findMany()
     }
 
     public async findTarefaById(id: string): Promise<Tarefa | null> {
@@ -39,6 +37,31 @@ class TarefaRepository {
             where: { dono },
         });
     }
+    
+    public async findTarefasByCategorias(categorias: string | string[]): Promise<Tarefa[]> {
+        const categoriasArray = Array.isArray(categorias) ? categorias : [categorias];
+    
+        return await prisma.tarefa.findMany({
+            where: {
+                categorias: {
+                    some: {
+                        categoriaId: {
+                            in: categoriasArray, 
+                        },
+                    },
+                },
+            },
+            include: {
+                categorias: {
+                    include: {
+                        categoria: true,
+                    },
+                },
+            },
+        });
+    }
+    
+    
 }
 
 export default new TarefaRepository();
