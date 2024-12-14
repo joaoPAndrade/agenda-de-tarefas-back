@@ -1,6 +1,7 @@
 import { Router, Request, Response, RequestHandler } from 'express';
 import userController from '../controllers/userController';
 import authService from '../services/authService';
+import taskRoutes from './taskRoutes';
 
 const handlerLogin: RequestHandler = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -24,6 +25,7 @@ class Routes {
         router.get('/user', userController.getUser);
 
         router.get('/user/:id', userController.getUserById)
+
         router.get('/user/email/:email', userController.findUserByEmail)
 
         router.post('/user', userController.createUser);
@@ -33,6 +35,8 @@ class Routes {
         router.delete('/user/:id', userController.deleteUser);
 
         router.post('/login', handlerLogin);
+
+        router.use(taskRoutes);
 
         return router;
     }
