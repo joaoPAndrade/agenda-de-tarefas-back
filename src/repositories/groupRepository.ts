@@ -32,6 +32,19 @@ class GroupRepository {
             where: { id }
         });
     }
+
+    async findParticipantsByGroup(groupId: number) {
+        return prisma.group.findUnique({
+            where: { id: groupId },
+            include: {
+                participants: {
+                    include: {
+                        user: { select: { name: true, email: true } }, // Busca nome e e-mail do usuário
+                    },
+                },
+            },
+        });
+    }
 }
 
 export default new GroupRepository();

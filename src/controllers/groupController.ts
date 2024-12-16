@@ -26,14 +26,23 @@ class GroupController {
         } else {
             res.status(200).send(result.group);
         }
+    }
 
+    public async getParticipantsByGroup(req: Request, res: Response){
+
+        const { id } = req.params;
+        const idInt = parseInt(id);
+
+        groupService.getGroupById(idInt);
+
+        groupService.getParticipantsByGroup(idInt);
 
     }
 
     public async createGroup(req: Request, res: Response): Promise<void> {
 
         const groupData = req.body
-
+        
         const result = await groupService.createGroup(groupData);
 
         if(result.error){

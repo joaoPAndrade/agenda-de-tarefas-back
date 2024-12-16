@@ -2,9 +2,11 @@ import groupRepository from '../repositories/groupRepository';
 import { groupSchema, partialGroupSchema } from '../validation/groupValidationSchema';
 import jwt from 'jsonwebtoken';
 import config from '../config';
+import userService from './userService';
 interface Group{
     name: string;
     description: string;
+    ownerEmail: string;
 }
 class GroupService{
     public async getAllGroups(){
@@ -24,6 +26,9 @@ class GroupService{
     }
 
     public async createGroup(newGroup: Group): Promise<{ error?: string, group?: Group; token?: string }> {
+
+        userService.getUserByEmail(newGroup.ownerEmail);
+
         const { error } = groupSchema.validate(newGroup);
     
         if (error) {
@@ -61,6 +66,23 @@ class GroupService{
         const deletedGroup = await groupRepository.deleteGroup(id);
         
         return { group: deletedGroup };
+    }
+
+    public async getParticipantsByGroup(id: number): Promise<{error?: string, participants?: {name: string, email: string}[]}>{
+        const group = await groupRepository.findGroupById(id);
+
+        if(!group){
+            return { error: `Group with id ${id} not found!` };
+        }
+
+        const participants = await groupRepository.findParticipantsByGroup(id);
+
+        const participantData = participants ? participants.participants.map(p => ({
+            name: p.user.name,
+            email: p.user.email
+        })) : [];
+        return { participants: participantData };
+
     }
 }
 
