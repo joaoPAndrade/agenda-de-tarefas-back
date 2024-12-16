@@ -1,96 +1,85 @@
 import { Request, Response } from 'express';
 import groupService from '../services/groupService';
 
-class groupController {
+class GroupController {
 
-    // public async getUser (req: Request, res: Response): Promise<void> {
+    public async getGroup (req: Request, res: Response): Promise<void> {
 
-    //     const users = await userService.getAllUsers();
-    //     res.status(200).send(users);
+        const groups = await groupService.getAllGroups();
+        res.status(200).send(groups);
 
-    // }
+    }
 
-    // public async getUserById (req: Request, res: Response): Promise<void> {
-    //     const { id } = req.params;
-    //     const intId = parseInt(id);
+    public async getGroupById (req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const intId = parseInt(id);
 
-    //     const result = await userService.getUserById(intId);
+        if(isNaN(intId)){
+            res.status(400).send({error : 'Invalid group ID'});
+            return
+        }
 
-    //     if(result.error){
-    //         res.status(400).send({error: result.error});
-    //     } else {
-    //         res.status(200).send(result.user);
-    //     }
-
-
-    // }
-
-    public async createGroup(req: Request, res: Response): Promise<void> {
-
-        const groupData = req.body
-
-        const result = await groupService.createUser(groupData);
+        const result = await groupService.getGroupById(intId);
 
         if(result.error){
-            res.status(400).send({error: result.error})
-        }else {
-            res.status(201).send({user: result.user, token:result.token});
+            res.status(400).send({error: result.error});
+        } else {
+            res.status(200).send(result.group);
         }
 
 
     }
 
-    // public async updateUser(req: Request, res: Response): Promise<void> {
-    //     const { id } = req.params;
-    //     const intId = parseInt(id);
-    //     const userData = req.body;
+    public async createGroup(req: Request, res: Response): Promise<void> {
 
-    //     if(isNaN(intId)){
-    //         res.status(400).send({error : 'Invalid user ID'});
-    //         return
-    //     }
+        const groupData = req.body
 
-    //     const result = await userService.updateUser(intId, userData);
+        const result = await groupService.createGroup(groupData);
 
-    //     if(result.error) {
-    //         res.status(400).send({ error: result.error });
-    //     } else {
-    //         res.status(200).send(result.user);
-    //     }
+        if(result.error){
+            res.status(400).send({error: result.error})
+        }else {
+            res.status(201).send({group: result.group, token:result.token});
+        }
+
+
+    }
+
+    public async updateGroup(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const intId = parseInt(id);
+        const groupData = req.body;
+
+        if(isNaN(intId)){
+            res.status(400).send({error : 'Invalid group ID'});
+            return
+        }
+
+        const result = await groupService.updateGroup(intId, groupData);
+
+        if(result.error) {
+            res.status(400).send({ error: result.error });
+        } else {
+            res.status(200).send(result.group);
+        }
             
-    // }
+    }
 
-    // public async deleteUser(req: Request, res: Response): Promise<void> {
-    //     const { id } = req.params;
-    //     const intId = parseInt(id);
+    public async deleteGroup(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const intId = parseInt(id);
 
-    //     const result = await userService.deleteUser(intId);
+        const result = await groupService.deleteGroup(intId);
 
-    //     if(result.error){
-    //         res.status(500).send({ error: result.error });
-    //     } else {
-    //         res.status(200).send({ message: 'User deleted successfully' });
-    //     }
-    // }
-    // public async findUserByEmail(req: Request, res: Response): Promise<void> {
-    //     const { email } = req.params;
-    //     try {
-    //         const result = await userService.getUserByEmail(email);
-    
-    //         if (result.error) {
-    //             res.status(500).send({ error: result.error });
-    //         } else if (!result) {
-    //             res.status(404).send({ message: 'User not found' });
-    //         } else {
-    //             res.status(200).send(result);
-    //         }
-    //     } catch (error) {
-    //         res.status(500).send({ error: 'Internal server error' });
-    //     }
-    // }
+        if(result.error){
+            res.status(500).send({ error: result.error });
+        } else {
+            res.status(200).send({ message: 'Group deleted successfully' });
+        }
+    }
 }
 
-export default new UserController();
+export default new GroupController();
 
 
 

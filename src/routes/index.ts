@@ -1,6 +1,7 @@
 import { Router, Request, Response, RequestHandler } from 'express';
 import userController from '../controllers/userController';
 import authService from '../services/authService';
+import groupController from '../controllers/groupController';
 
 const handlerLogin: RequestHandler = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -20,20 +21,22 @@ const handlerLogin: RequestHandler = async (req: Request, res: Response): Promis
 
 class Routes {
     static define(router: Router): Router { 
-
-        router.get('/user', userController.getUser);
-
-        router.get('/user/:id', userController.getUserById)
-        router.get('/user/email/:email', userController.findUserByEmail)
-
-        router.post('/user', userController.createUser);
-
-        router.put('/user/:id', userController.updateUser);
-
-        router.delete('/user/:id', userController.deleteUser);
-
+        
         router.post('/login', handlerLogin);
 
+        router.get('/user', userController.getUser);
+        router.get('/user/:id', userController.getUserById)
+        router.get('/user/email/:email', userController.findUserByEmail)
+        router.post('/user', userController.createUser);
+        router.put('/user/:id', userController.updateUser);
+        router.delete('/user/:id', userController.deleteUser);
+        
+        router.get('/group', groupController.getGroup);
+        router.get('/group/:id', groupController.getGroupById)
+        router.post('/group', groupController.createGroup);
+        router.put('/group/:id', groupController.updateGroup);
+        router.delete('/group/:id', groupController.deleteGroup);
+        
         return router;
     }
 }
