@@ -36,7 +36,10 @@ class Routes {
         router.post('/group', groupController.createGroup);
         router.put('/group/:id', groupController.updateGroup);
         router.delete('/group/:id', groupController.deleteGroup);
-        router.put('/group/participants/:id', groupController.addParticipantToGroup);
+
+        router.post('/group/participants/:id', groupController.addParticipantToGroup);
+        router.get('/group/participants/:id', groupController.getParticipantsByGroup);
+        router.delete('/group/participants/:id', groupController.removeParticipantFromGroup);
         
         return router;
     }

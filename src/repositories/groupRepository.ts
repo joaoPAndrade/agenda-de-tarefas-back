@@ -1,5 +1,6 @@
 import { Group } from '@prisma/client';
 import { prisma } from '../../prisma/client';
+import { connect } from 'http2';
 
 class GroupRepository {
     public async createGroup(newGroup: any) {
@@ -46,15 +47,40 @@ class GroupRepository {
         });
     }
     async addParticipantToGroup(groupId: number, id: number) {
-        return prisma.group.update({
-            where: { id: groupId },
+        return prisma.participants.create({
             data: {
-                participants: {
+                user: {
                     connect: { id: id },
-                },
-            },
+                }, 
+                group: {
+                    connect: { id: groupId },
+                }
+            }
+
         });
     }
+
+    async removeParticipantFromGroup(groupId: number, userEmail: string){
+        return prisma.participants.deleteMany({
+            where: {
+                groupId,
+                user: {
+                    email: userEmail
+                }
+            }
+        })
+    }
+
+    async findParticipantsByIdByGroup(groupId: number, userEmail: string){
+        return prisma.participants.findFirst({
+            where: {
+                groupId,
+                user: {
+                    email: userEmail
+                }
+            }
+        })
+    } 
 }
 
 export default new GroupRepository();

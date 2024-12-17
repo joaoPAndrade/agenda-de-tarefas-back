@@ -35,7 +35,21 @@ class GroupController {
 
         groupService.getGroupById(idInt);
 
-        groupService.getParticipantsByGroup(idInt);
+        const participants = await groupService.getParticipantsByGroup(idInt);
+        console.log(participants);
+
+        if(participants.error){
+            res.status(400).send({error: participants.error})
+        }
+
+
+        if(participants == null){
+            res.status(400).send({error: "No participants found"})
+        } else {
+            res.status(200).send(participants);
+        }
+
+        
 
     }
 
@@ -98,6 +112,22 @@ class GroupController {
         } else {
             res.status(200).send({ message: 'Participant added to group' });
         }
+    }
+
+    public async removeParticipantFromGroup(req: Request, res: Response): Promise<void> {
+
+        const { id } = req.params;
+        const idInt = parseInt(id);
+        const{ userEmail }= req.body;
+
+        const result = await groupService.removeParticipantFromGroup(idInt, userEmail);
+
+        if(result.error){
+            res.status(400).send({ error: result.error });
+        } else {
+            res.status(200).send({ message: 'Participant removed from group' });
+        }
+
     }
 }
 

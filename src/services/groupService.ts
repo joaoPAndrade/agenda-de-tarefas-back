@@ -80,12 +80,11 @@ class GroupService {
             return { error: `Group with id ${id} not found!` };
         }
 
-        const participants = await groupRepository.findParticipantsByGroup(id);
-
-        const participantData = participants ? participants.participants.map(p => ({
+        const result = await groupRepository.findParticipantsByGroup(id);
+        const participantData = result?.participants.map(p => ({
             name: p.user.name,
             email: p.user.email
-        })) : [];
+        })) || [];
         return { participants: participantData };
 
     }
@@ -103,9 +102,41 @@ class GroupService {
             return { error: `User with email ${userEmail} not found!` };
         }
 
+        const participants = await groupRepository.findParticipantsByGroup(groupId);
+
+        if (participants?.participants.find(p => p.user.email === userEmail)) {
+            return { error: `User with email ${userEmail} is already a participant of this group!` };
+        }
+        
+
         const updatedGroup = await groupRepository.addParticipantToGroup(groupId, userResult.user.id);
 
         return {void: null};
+    }
+
+    public async removeParticipantFromGroup(groupId: number, userEmail: string): Promise<{ error?: string, message?: string, count?: number }> {
+        const group = await groupRepository.findGroupById(groupId);
+
+        if (!group) {
+            return { error: `Group with id ${groupId} not found!` };
+        }
+
+        const userResult = await userService.getUserByEmail(userEmail);
+
+        if (!userResult.user) {
+            return { error: `User with email ${userEmail} not found!` };
+        }
+
+        const userExists = await groupRepository.findParticipantsByIdByGroup(groupId, userEmail);
+
+        if (!userExists) {
+            return { error: `User with email ${userEmail} is not a participant of this group!` };
+        }
+
+        const { count } = await groupRepository.removeParticipantFromGroup(groupId, userEmail);
+
+        return { message: "Participant removed successfully", count };
+
     }
 
 }
