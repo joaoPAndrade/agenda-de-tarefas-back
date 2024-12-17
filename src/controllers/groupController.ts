@@ -86,6 +86,19 @@ class GroupController {
             res.status(200).send({ message: 'Group deleted successfully' });
         }
     }
+
+    public async addParticipantToGroup(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const { userEmail } = req.body;
+
+        const result = await groupService.addParticipantToGroup(parseInt(id), userEmail);
+
+        if(result.error){
+            res.status(400).send({ error: result.error });
+        } else {
+            res.status(200).send({ message: 'Participant added to group' });
+        }
+    }
 }
 
 export default new GroupController();

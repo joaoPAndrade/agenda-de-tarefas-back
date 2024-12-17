@@ -11,6 +11,12 @@ const groupSchema = Joi.object({
         'string.empty': 'Description cannot be an empty field',
         'any.required': 'Description is a required field'
     }),
+    ownerEmail: Joi.string().email().required().messages({
+        'string.base': 'Email should be a type of text',
+        'string.email': 'Email must be a valid email',
+        'string.empty': 'Email cannot be an empty field',
+        'any.required': 'Email is a required field'
+    }),
 });
 
 const partialGroupSchema = Joi.object({

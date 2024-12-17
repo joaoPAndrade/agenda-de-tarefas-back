@@ -3,6 +3,7 @@ import { partialUserSchema, userSchema } from '../validation/userValidationSchem
 import jwt from 'jsonwebtoken';
 import config from '../config';
 interface User{
+    id: number;
     email: string;
     name: string;
     senha: string;

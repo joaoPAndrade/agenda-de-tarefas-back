@@ -45,6 +45,16 @@ class GroupRepository {
             },
         });
     }
+    async addParticipantToGroup(groupId: number, id: number) {
+        return prisma.group.update({
+            where: { id: groupId },
+            data: {
+                participants: {
+                    connect: { id: id },
+                },
+            },
+        });
+    }
 }
 
 export default new GroupRepository();
