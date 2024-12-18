@@ -41,7 +41,6 @@ class GroupController {
         groupService.getGroupById(idInt);
 
         const participants = await groupService.getParticipantsByGroup(idInt);
-        console.log(participants);
 
         if(participants.error){
             res.status(400).send({error: participants.error})
