@@ -17,12 +17,27 @@ const handlerLogin: RequestHandler = async (req: Request, res: Response): Promis
     }
 };
 
+const handlerLogout: RequestHandler = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1]; // Supondo que o token está no header Authorization: Bearer <token>
+        if (!token) {
+            return res.status(400).json({ error: 'Token not provided' });
+        }
+
+        await authService.logout(token);
+        return res.status(200).json({ message: 'Logged out successfully' });
+    } catch (err) {
+        return res.status(500).json({ error: 'Server error' });
+    }
+};
+
 
 
 class Routes {
     static define(router: Router): Router { 
         
         router.post('/login', handlerLogin);
+        router.post('/logout', handlerLogout);
 
         router.get('/user', userController.getUser);
         router.get('/user/:id', userController.getUserById)
