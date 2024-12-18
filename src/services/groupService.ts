@@ -39,6 +39,12 @@ class GroupService {
             return { error: `Validation error: ${error.details[0].message}` };
         }
 
+        const userResult = await userService.getUserByEmail(newGroup.ownerEmail);
+
+        if (!userResult.user) {
+            return { error: `User with email ${newGroup.ownerEmail} not found!` };
+        }
+
         const createdGroup = await groupRepository.createGroup(newGroup);
 
         return { group: createdGroup };
@@ -79,7 +85,7 @@ class GroupService {
         }
 
         const result = await groupRepository.findParticipantsByGroup(id);
-        const participantData = result?.participants.map(p => ({
+        const participantData = result?.participants.map((p: {user: {name: string, email: string}}) => ({
             name: p.user.name,
             email: p.user.email
         })) || [];
@@ -102,7 +108,7 @@ class GroupService {
 
         const participants = await groupRepository.findParticipantsByGroup(groupId);
 
-        if (participants?.participants.find(p => p.user.email === userEmail)) {
+        if (participants?.participants.find((p: {user: {email: string}}) => p.user.email === userEmail)) {
             return { error: `User with email ${userEmail} is already a participant of this group!` };
         }
         

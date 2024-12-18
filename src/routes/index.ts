@@ -2,6 +2,7 @@ import { Router, Request, Response, RequestHandler } from 'express';
 import userController from '../controllers/userController';
 import authService from '../services/authService';
 import groupController from '../controllers/groupController';
+import participantController from '../controllers/participantController';
 
 const handlerLogin: RequestHandler = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -55,6 +56,8 @@ class Routes {
         router.post('/group/participants/:id', groupController.addParticipantToGroup);
         router.get('/group/participants/:id', groupController.getParticipantsByGroup);
         router.delete('/group/participants/:id', groupController.removeParticipantFromGroup);
+
+        router.get('/user/groups/:email', participantController.getGroupsByParticipant);
         
         return router;
     }
