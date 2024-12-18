@@ -11,20 +11,25 @@ class GroupController {
     }
 
     public async getGroupById (req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
-        const intId = parseInt(id);
 
-        if(isNaN(intId)){
-            res.status(400).send({error : 'Invalid group ID'});
-            return
-        }
-
-        const result = await groupService.getGroupById(intId);
-
-        if(result.error){
-            res.status(400).send({error: result.error});
-        } else {
-            res.status(200).send(result.group);
+        try {
+            const { id } = req.params;
+            const intId = parseInt(id);
+    
+            if(isNaN(intId)){
+                res.status(400).send({error : 'Invalid group ID'});
+                return
+            }
+    
+            const result = await groupService.getGroupById(intId);
+    
+            if(result.error){
+                res.status(400).send({error: result.error});
+            } else {
+                res.status(200).send(result.group);
+            }
+        } catch (error){
+            res.status(400).send({error: "Invalid group ID"})
         }
     }
 
