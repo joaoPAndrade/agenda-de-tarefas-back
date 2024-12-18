@@ -23,15 +23,14 @@ class GroupService {
     public async getGroupById(id: number): Promise<{ error?: string, group?: Group }> {
         const group = await groupRepository.findGroupById(id);
 
-        if (!group) {
+        if (group == null) {
             return { error: `Group with id ${id} not found!` };
         }
 
         return { group: group };
     }
 
-    public async createGroup(newGroup: Group): Promise<{ error?: string, group?: Group; token?: string }> {
-
+    public async createGroup(newGroup: Group): Promise<{ error?: string, group?: Group}> {
         userService.getUserByEmail(newGroup.ownerEmail);
 
         const { error } = groupSchema.validate(newGroup);
@@ -42,8 +41,7 @@ class GroupService {
 
         const createdGroup = await groupRepository.createGroup(newGroup);
 
-        const token = jwt.sign({ id: createdGroup.id, name: createdGroup.name }, config.jwtSecret, { expiresIn: '1h' });
-        return { group: createdGroup, token };
+        return { group: createdGroup };
     }
 
 

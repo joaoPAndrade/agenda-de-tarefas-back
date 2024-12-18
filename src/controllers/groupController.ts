@@ -12,24 +12,25 @@ class GroupController {
 
     public async getGroupById (req: Request, res: Response): Promise<void> {
 
-        try {
+        try{
+
             const { id } = req.params;
             const intId = parseInt(id);
-    
+            
             if(isNaN(intId)){
                 res.status(400).send({error : 'Invalid group ID'});
-                return
-            }
-    
-            const result = await groupService.getGroupById(intId);
-    
-            if(result.error){
-                res.status(400).send({error: result.error});
-            } else {
-                res.status(200).send(result.group);
-            }
+            return
+        }
+        
+        const result = await groupService.getGroupById(intId);
+        
+        if(result.error){
+            res.status(400).send({error: result.error});
+        } else {
+            res.status(200).send(result.group);
+        }
         } catch (error){
-            res.status(400).send({error: "Invalid group ID"})
+            res.send(400).send({error: "Invalid group ID"});
         }
     }
 
@@ -41,6 +42,7 @@ class GroupController {
         groupService.getGroupById(idInt);
 
         const participants = await groupService.getParticipantsByGroup(idInt);
+        console.log(participants);
 
         if(participants.error){
             res.status(400).send({error: participants.error})
@@ -66,7 +68,7 @@ class GroupController {
         if(result.error){
             res.status(400).send({error: result.error})
         }else {
-            res.status(201).send({group: result.group, token:result.token});
+            res.status(201).send({group: result.group });
         }
 
 

@@ -17,11 +17,15 @@ class GroupRepository {
     }
 
     public async deleteGroup(id: number): Promise<Group> {
+        await prisma.participants.deleteMany({
+            where: {
+                groupId: id,
+            },
+        });
         return await prisma.group.delete({
-            where: { id }
+            where: { id },
         });
     }
-
     public async findAllGroups() {
         const groups = await prisma.group.findMany();
 
@@ -51,7 +55,7 @@ class GroupRepository {
             data: {
                 user: {
                     connect: { id: id },
-                }, 
+                },
                 group: {
                     connect: { id: groupId },
                 }
@@ -60,7 +64,7 @@ class GroupRepository {
         });
     }
 
-    async removeParticipantFromGroup(groupId: number, userEmail: string){
+    async removeParticipantFromGroup(groupId: number, userEmail: string) {
         return prisma.participants.deleteMany({
             where: {
                 groupId,
@@ -71,7 +75,7 @@ class GroupRepository {
         })
     }
 
-    async findParticipantsByIdByGroup(groupId: number, userEmail: string){
+    async findParticipantsByIdByGroup(groupId: number, userEmail: string) {
         return prisma.participants.findFirst({
             where: {
                 groupId,
@@ -80,7 +84,7 @@ class GroupRepository {
                 }
             }
         })
-    } 
+    }
 }
 
 export default new GroupRepository();
