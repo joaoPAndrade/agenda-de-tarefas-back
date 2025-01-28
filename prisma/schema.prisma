@@ -20,53 +20,53 @@ model User {
    senha String
 }
 
-model Tarefa {
+model Task {
   id            String          @id @default(uuid()) // PK
-  titulo        String          @db.VarChar(30)
-  comentarios   String?         @db.Text
-  descricao     String?         @db.Text
-  dono          String          @db.VarChar(50)
-  dataCriacao   DateTime        @default(now())
-  dataTarefa    DateTime
-  dataConclusao DateTime?
-  ehRecorrente  Boolean
-  prioridade    Prioridade
+  title        String          @db.VarChar(50)
+  comments   String?         @db.Text
+  description     String?         @db.Text
+  owner          String          @db.VarChar(100)
+  dateCreation   DateTime        @default(now())
+  dateTask    DateTime  // data para conclusão
+  dateConclusion DateTime? // data onde foi concluido
+  isRecurrent  Boolean
+  priority    Priority
   status        Status
 
-  categorias    TarefaCategoria[]
+  categories    taskCategory[]
 
-  @@map("tarefa") 
+  @@map("task") 
 }
 
-model Categoria {
+model Category {
   id   String          @id @default(uuid()) // PK
-  nome String          @db.VarChar(200)
+  name String          @db.VarChar(200)
 
   
-  tarefas TarefaCategoria[]
+  tasks taskCategory[]
 
-  @@map("categoria") 
+  @@map("category") 
 }
 
-model TarefaCategoria {
-  tarefaId    String  
-  categoriaId String  
+model taskCategory {
+  taskId    String  
+  categoryId String  
 
-  tarefa      Tarefa   @relation(fields: [tarefaId], references: [id], onDelete: Cascade)
-  categoria   Categoria @relation(fields: [categoriaId], references: [id], onDelete: Cascade)
+  task      Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
-  @@id([tarefaId, categoriaId]) 
-  @@map("tarefa_categoria") 
+  @@id([taskId, categoryId]) 
+  @@map("task_category") 
 }
 
-enum Prioridade {
-  BAIXA
-  MEDIA
-  ALTA
+enum Priority {
+  LOW
+  MID
+  HIGH
 }
 
 enum Status {
-  PENDENTE
-  EM_PROGRESSO
-  CONCLUIDA
+  TODO
+  ONGOING
+  COMPLETED
 }

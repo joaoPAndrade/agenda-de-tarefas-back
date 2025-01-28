@@ -1,32 +1,32 @@
 import { Request, Response } from 'express';
 import taskService from '../services/taskService';
 
-class TarefaController {
-    public async getTarefas(req: Request, res: Response): Promise<void> {
+class TaskController {
+    public async getTasks(req: Request, res: Response): Promise<void> {
         try {
-            const tarefas = await taskService.getAllTarefas();
-            res.status(200).send(tarefas);
+            const tasks = await taskService.getAllTasks();
+            res.status(200).send(tasks);
         } catch (error) {
             res.status(500).send({ error: 'server error' });
         }
     }
 
-    public async getTarefaById(req: Request, res: Response): Promise<void> {
+    public async getTaskById(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         
     
-        const result = await taskService.getTarefaById(id);
+        const result = await taskService.getTaskById(id);
 
         if (result.error) {
             res.status(400).send({ error: result.error });
         } else {
-            res.status(200).send(result.tarefa);
+            res.status(200).send(result.tasks);
         }
         
     }
     
-    public async createTarefa(req: Request, res: Response): Promise<void> {
-        const tarefaData = req.body;
+    public async createTask(req: Request, res: Response): Promise<void> {
+        const taskData = req.body;
         // const dono = req.user.id; 
 
         // const result = await taskService.createTarefa(tarefaData, dono);
@@ -38,24 +38,24 @@ class TarefaController {
         // }
     }
 
-    public async updateTarefa(req: Request, res: Response): Promise<void> {
+    public async updateTask(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
-        const tarefaData = req.body;
+        const taskData = req.body;
 
     
-        const result = await taskService.updateTarefa(id, tarefaData);
+        const result = await taskService.updateTask(id, taskData);
 
         if (result.error) {
             res.status(400).send({ error: result.error });
         } else {
-            res.status(200).send(result.tarefa);
+            res.status(200).send(result.task);
         }
     }
 
-    public async deleteTarefa(req: Request, res: Response): Promise<void> {
+    public async deleteTask(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
 
-        const result = await taskService.deleteTarefa(id);
+        const result = await taskService.deleteTask(id);
 
         if (result.error) {
             res.status(500).send({ error: result.error });
@@ -66,12 +66,12 @@ class TarefaController {
     }
 
 
-    public async findTarefasByCategoria(req: Request, res: Response): Promise<void> {
+    public async findTasksByCategories(req: Request, res: Response): Promise<void> {
 
-        const { categoriaId } = req.params;
+        const { categoryId } = req.params;
     
         try {
-            const result = await taskService.getTarefasByCategoria(categoriaId);
+            const result = await taskService.getTasksByCategory(categoryId);
             if (result.error) {
                 res.status(500).send({ error: result.error });
             }
@@ -88,4 +88,4 @@ class TarefaController {
     
 }
 
-export default new TarefaController();
+export default new TaskController();

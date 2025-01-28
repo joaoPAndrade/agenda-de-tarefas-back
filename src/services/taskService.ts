@@ -1,73 +1,73 @@
-import { Tarefa } from '@prisma/client';
+import { Task } from '@prisma/client';
 import taskRepository from '../repositories/taskRepository'; 
-import { tarefaSchema, partialTarefaSchema } from '../validation/taskValidationSchema'; 
+import { taskSchema, partialTaskSchema } from '../validation/taskValidationSchema'; 
 
-interface TarefaResponse {
+interface TaskResponse {
     error?: string;
-    tarefa?: Tarefa;
-    tarefas?: Tarefa[];
+    task?: Task;
+    tasks?: Task[];
 }
 
-class TarefaService {
-    public async getAllTarefas(): Promise<TarefaResponse> {
-        const tarefas = await taskRepository.findAllTarefas();
-        if (!tarefas || tarefas.length === 0) {
+class TaskService {
+    public async getAllTasks(): Promise<TaskResponse> {
+        const tasks = await taskRepository.findAllTasks();
+        if (!tasks || tasks.length === 0) {
             return { error: 'No tarefas found.' };
         }
-        return { tarefas };
+        return { tasks };
     }
 
-    public async getTarefaById(id: string): Promise<TarefaResponse> {
-        const tarefa = await taskRepository.findTarefaById(id);
-        if (!tarefa) {
+    public async getTaskById(id: string): Promise<TaskResponse> {
+        const task = await taskRepository.findTaskById(id);
+        if (!task) {
             return { error: `Tarefa with id ${id} not found!` };
         }
-        return { tarefa };
+        return { task };
     }
 
-    public async createTarefa(newTarefa: Omit<Tarefa, 'id' | 'dono'>, dono: string): Promise<TarefaResponse> {
-        const tarefaData = { ...newTarefa, dono };
-        const { error } = tarefaSchema.validate(tarefaData);
+    public async createTask(newTarefa: Omit<Task, 'id' | 'owner'>, owner: string): Promise<TaskResponse> {
+        const TaskData = { ...newTarefa, owner };
+        const { error } = taskSchema.validate(TaskData);
         if (error) {
             return { error: `Validation error: ${error.details[0].message}` };
         }
 
-        const createdTarefa = await taskRepository.createTarefa(tarefaData);
-        return { tarefa: createdTarefa };
+        const createdTask = await taskRepository.createTask(TaskData);
+        return { task: createdTask };
     }
 
-    public async updateTarefa(id: string, data: Partial<Tarefa>): Promise<TarefaResponse> {
-        const { error } = partialTarefaSchema.validate(data);
+    public async updateTask(id: string, data: Partial<Task>): Promise<TaskResponse> {
+        const { error } = partialTaskSchema.validate(data);
         if (error) {
             return { error: `Validation error: ${error.details[0].message}` };
         }
 
-        const tarefa = await taskRepository.findTarefaById(id);
-        if (!tarefa) {
+        const task = await taskRepository.findTaskById(id);
+        if (!task) {
             return { error: `Tarefa with id ${id} not found!` };
         }
 
-        const updatedTarefa = await taskRepository.updateTarefa(id, data);
-        return { tarefa: updatedTarefa };
+        const updatedTask = await taskRepository.updateTask(id, data);
+        return { task: updatedTask };
     }
 
-    public async deleteTarefa(id: string): Promise<TarefaResponse> {
-        const tarefa = await taskRepository.findTarefaById(id);
-        if (!tarefa) {
+    public async deleteTask(id: string): Promise<TaskResponse> {
+        const task = await taskRepository.findTaskById(id);
+        if (!task) {
             return { error: `Tarefa with id ${id} not found!` };
         }
 
-        const deletedTarefa = await taskRepository.deleteTarefa(id);
-        return { tarefa: deletedTarefa };
+        const deletedTask = await taskRepository.deleteTask(id);
+        return { task: deletedTask };
     }
 
-    public async getTarefasByCategoria(categoria: string): Promise<TarefaResponse> {
-        const tarefas = await taskRepository.findTarefasByCategorias(categoria);
-        if (!tarefas || tarefas.length === 0) {
+    public async getTasksByCategory(categoria: string): Promise<TaskResponse> {
+        const tasks = await taskRepository.findTasksByCategories(categoria);
+        if (!tasks || tasks.length === 0) {
             return { error: `No tarefas found for categoriaId ${categoria}` };
         }
-        return { tarefas };
+        return { tasks };
     }
 }
 
-export default new TarefaService();
+export default new TaskService();

@@ -1,60 +1,60 @@
 import { prisma } from '../../prisma/client';
-import { Tarefa } from '@prisma/client';
+import { Task } from '@prisma/client';
 
-class TarefaRepository {
-    public async createTarefa(newTarefa: Omit<Tarefa, 'id'>): Promise<Tarefa> {
-        return await prisma.tarefa.create({
-            data: newTarefa,
+class TaskRepository {
+    public async createTask(newTask: Omit<Task, 'id'>): Promise<Task> {
+        return await prisma.task.create({
+            data: newTask,
         });
     }
 
-    public async updateTarefa(id: string, data: Partial<Tarefa>): Promise<Tarefa> {
-        return await prisma.tarefa.update({
+    public async updateTask(id: string, data: Partial<Task>): Promise<Task> {
+        return await prisma.task.update({
             where: { id },
             data: data,
         });
     }
 
-    public async deleteTarefa(id: string): Promise<Tarefa> {
-        return await prisma.tarefa.delete({
+    public async deleteTask(id: string): Promise<Task> {
+        return await prisma.task.delete({
             where: { id },
         });
     }
 
-    public async findAllTarefas(): Promise<Tarefa[]> {
+    public async findAllTasks(): Promise<Task[]> {
 
-        return await prisma.tarefa.findMany()
+        return await prisma.task.findMany()
     }
 
-    public async findTarefaById(id: string): Promise<Tarefa | null> {
-        return await prisma.tarefa.findUnique({
+    public async findTaskById(id: string): Promise<Task | null> {
+        return await prisma.task.findUnique({
             where: { id },
         });
     }
 
-    public async findTarefasByDono(dono: string): Promise<Tarefa[]> {
-        return await prisma.tarefa.findMany({
-            where: { dono },
+    public async findTasksByOwner(owner: string): Promise<Task[]> {
+        return await prisma.task.findMany({
+            where: { owner },
         });
     }
     
-    public async findTarefasByCategorias(categorias: string | string[]): Promise<Tarefa[]> {
-        const categoriasArray = Array.isArray(categorias) ? categorias : [categorias];
+    public async findTasksByCategories(categories: string | string[]): Promise<Task[]> {
+        const categoriesArray = Array.isArray(categories) ? categories : [categories];
     
-        return await prisma.tarefa.findMany({
+        return await prisma.task.findMany({
             where: {
-                categorias: {
+                categories: {
                     some: {
-                        categoriaId: {
-                            in: categoriasArray, 
+                        categoryId: {
+                            in: categoriesArray, 
                         },
                     },
                 },
             },
             include: {
-                categorias: {
+                categories: {
                     include: {
-                        categoria: true,
+                        category: true,
                     },
                 },
             },
@@ -64,4 +64,4 @@ class TarefaRepository {
     
 }
 
-export default new TarefaRepository();
+export default new TaskRepository();
