@@ -24,17 +24,18 @@ class TarefaController {
         }
         
     }
-
+    
     public async createTarefa(req: Request, res: Response): Promise<void> {
         const tarefaData = req.body;
+        // const dono = req.user.id; 
 
-        const result = await taskService.createTarefa(tarefaData);
+        // const result = await taskService.createTarefa(tarefaData, dono);
 
-        if (result.error) {
-            res.status(400).send({ error: result.error });
-        } else {
-            res.status(201).send({ tarefa: result.tarefa });
-        }
+        // if (result.error) {
+        //     res.status(400).send({ error: result.error });
+        // } else {
+        //     res.status(201).send({ tarefa: result.tarefa });
+        // }
     }
 
     public async updateTarefa(req: Request, res: Response): Promise<void> {

@@ -25,13 +25,14 @@ class TarefaService {
         return { tarefa };
     }
 
-    public async createTarefa(newTarefa: Tarefa): Promise<TarefaResponse> {
-        const { error } = tarefaSchema.validate(newTarefa);
+    public async createTarefa(newTarefa: Omit<Tarefa, 'id' | 'dono'>, dono: string): Promise<TarefaResponse> {
+        const tarefaData = { ...newTarefa, dono };
+        const { error } = tarefaSchema.validate(tarefaData);
         if (error) {
             return { error: `Validation error: ${error.details[0].message}` };
         }
 
-        const createdTarefa = await taskRepository.createTarefa(newTarefa);
+        const createdTarefa = await taskRepository.createTarefa(tarefaData);
         return { tarefa: createdTarefa };
     }
 
