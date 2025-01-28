@@ -3,16 +3,16 @@ import taskController from '../controllers/taskController';
 
 const taskRoutes = Router();
 
-taskRoutes.get('/tarefas', taskController.getTarefas);
+taskRoutes.get('/tarefas', taskController.getTasks);
 
-taskRoutes.get('/tarefas/:id', taskController.getTarefaById);
+taskRoutes.get('/tarefas/:id', taskController.getTaskById);
 
-taskRoutes.post('/tarefas', taskController.createTarefa);
+taskRoutes.post('/tarefas', taskController.createTask);
 
-taskRoutes.put('/tarefas/:id', taskController.updateTarefa);
+taskRoutes.put('/tarefas/:id', taskController.updateTask);
 
-taskRoutes.delete('/tarefas/:id', taskController.deleteTarefa);
+taskRoutes.delete('/tarefas/:id', taskController.deleteTask);
 
-taskRoutes.get('/tarefas/categoria/:categoriaId', taskController.findTarefasByCategoria);
+taskRoutes.get('/tarefas/categoria/:categoriaId', taskController.findTasksByCategories);
 
 export default taskRoutes;
