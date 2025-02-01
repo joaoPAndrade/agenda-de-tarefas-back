@@ -14,6 +14,11 @@ class UserController {
         const { id } = req.params;
         const intId = parseInt(id);
 
+        if(isNaN(intId)){
+            res.status(400).send({error : 'Invalid user ID'});
+            return
+        }
+
         const result = await userService.getUserById(intId);
 
         if(result.error){
