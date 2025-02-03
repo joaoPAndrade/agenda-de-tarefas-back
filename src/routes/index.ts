@@ -40,9 +40,11 @@ class Routes {
         router.post('/login', handlerLogin);
         router.post('/logout', handlerLogout);
 
-        router.get('/user', userController.getUser);
-        router.get('/user/:id', userController.getUserById)
-        router.get('/user/email/:email', userController.findUserByEmail)
+        router.get('/user', userController.getUserWithoutPassword);
+        router.get('/user/password', userController.getUser);
+        router.get('/user/:id', userController.getUserByIdWithoutPassword);
+        router.get('/user/password/:id', userController.getUserById)
+        router.get('/user/email/:email', userController.findUserByEmail);
         router.post('/user', userController.createUser);
         router.put('/user/:id', userController.updateUser);
         router.delete('/user/:id', userController.deleteUser);

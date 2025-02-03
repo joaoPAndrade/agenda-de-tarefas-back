@@ -6,13 +6,17 @@ interface User{
     id: number;
     email: string;
     name: string;
-    senha: string;
+    senha?: string;
 }
 class UserService{
-    public async getAllUsers(){
-
+    public async getAllUsers(): Promise<{error?: string, users?: User[]}>{
         const users = await userRepository.findAllUsers();
-        return users
+
+        if(!users){
+            return {error: 'Users not found!'};
+        } 
+
+        return {users: users}
     }
 
     public async getUserById(id: number): Promise<{error?: string, user?: User}>{
@@ -23,6 +27,36 @@ class UserService{
         }   
 
         return {user: user};
+    }
+
+    public async getUserWithoutPassword(): Promise<{error?: string, users?: User[]}>{
+        const users = await userRepository.findAllUsers();
+
+        if(!users){
+            return{error: 'Users not found!'};
+        } 
+
+        const usersWithoutPassword = users.map(user => {
+            const { senha, ...userWithoutPassword} = user;
+            return userWithoutPassword
+        })
+
+        return {users: usersWithoutPassword}
+    }
+
+    public async getUserByIdWithoutPassword(id: number): Promise<{error?: string, user?: User}>{
+
+        const user = await userRepository.findUserById(id);
+
+        if(!user){
+            return{error: `User with id ${id} not found!`};
+        }   
+
+            const { senha, ...userWithoutPassword} = user;
+
+
+        return {user: userWithoutPassword};
+
     }
 
     public async createUser(newUser: User): Promise<{ error?: string, user?: User; token?: string }> {
