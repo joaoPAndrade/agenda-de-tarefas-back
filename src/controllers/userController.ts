@@ -5,8 +5,12 @@ class UserController {
 
     public async getUser (req: Request, res: Response): Promise<void> {
 
-        const users = await userService.getAllUsers();
-        res.status(200).send(users);
+        const result = await userService.getAllUsers();
+
+        if(result.error){
+            res.status(400).send({error: result.error})
+        }
+        res.status(200).send(result.users);
 
     }
 
@@ -27,6 +31,37 @@ class UserController {
             res.status(200).send(result.user);
         }
 
+
+    }
+
+    public async getUserWithoutPassword (req: Request, res: Response): Promise<void> {
+        const result = await userService.getUserWithoutPassword();
+
+        if(result.error){
+            res.status(400).send({error: result.error})
+        } else {
+            res.status(200).send(result.users)
+        }
+
+
+    }
+
+    public async getUserByIdWithoutPassword (req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const intId = parseInt(id);
+
+        if(isNaN(intId)){
+            res.status(400).send({error : 'Invalid user ID'});
+            return
+        }
+
+        const result = await userService.getUserByIdWithoutPassword(intId);
+
+        if(result.error){
+            res.status(400).send({error: result.error});
+        } else {
+            res.status(200).send(result.user);
+        }
 
     }
 
