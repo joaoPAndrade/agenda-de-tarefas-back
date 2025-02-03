@@ -52,6 +52,23 @@ class UserRepository {
             where: {email}
         })
     }
+
+    async findUsersByName(name: string) {
+      return await prisma.user.findMany({
+        where: {
+          name: {
+            contains: name,
+            mode: 'insensitive',
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+        take: 5, // Limita para evitar sobrecarga
+      });
+    }
 }
 
 export default new UserRepository();

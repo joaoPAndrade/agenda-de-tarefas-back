@@ -105,7 +105,7 @@ class UserService{
         
         return { user: deletedUser };
     }
-    public async getUserByEmail(email: string): Promise<{ error?: string; user?: User }> {
+    public async getUserByEmail(email: string): Promise<{ error?: string, user?: User }> {
         try {
             const user = await userRepository.findUserByEmail(email);
 
@@ -118,6 +118,12 @@ class UserService{
             console.error(error);
             return { error: 'Server error' }; 
         }
+    }
+
+    public async searchUsers(name: string): Promise<{user?: User[]}>{
+        if (!name) return {user: []};
+        const users = await userRepository.findUsersByName(name);
+        return {user: users}
     }
 }
 
