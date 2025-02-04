@@ -133,12 +133,19 @@ class UserController {
 
         try {
             const { name } = req.query;
+
+            if (!name) {
+                res.status(400).send([]);
+                return;
+            }
+            const nome = (name as string).replace(/-/g, " ")
+            console.log(nome);
             if(!name){
                 res.status(400).send([]);
+            }else {
+                const users = await userService.searchUsers(nome);
+                res.status(200).json(users);
             }
-
-            const users = await userService.searchUsers(String(name));
-            res.status(200).json(users);
         } catch (error){
             res.status(500).json({ error: 'Erro ao buscar usuários' })
         }

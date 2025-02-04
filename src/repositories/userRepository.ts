@@ -20,8 +20,19 @@ class UserRepository {
           where: { id },
           include: { participants: true },
         });
-      
+        
         if (user) {
+          const ownedGroups = await prisma.group.findMany({
+            where: { ownerEmail: user.email },
+          })
+
+          await prisma.group.deleteMany({
+            where: { id: { 
+              in: ownedGroups.map(group => group.id)
+             } 
+            }
+          })
+
           await prisma.participants.deleteMany({
             where: { userEmail: user.email },
           });
@@ -67,6 +78,9 @@ class UserRepository {
           email: true,
         },
         take: 5, // Limita para evitar sobrecarga
+        orderBy: {
+          name: 'asc',
+        },
       });
     }
 }
