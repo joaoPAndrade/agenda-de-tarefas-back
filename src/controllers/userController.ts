@@ -128,6 +128,30 @@ class UserController {
             res.status(500).send({ error: 'Internal server error' });
         }
     }
+
+    public async dinamicSearch(req: Request, res: Response): Promise<void> {
+
+        try {
+            const { name } = req.query;
+
+            if (!name) {
+                res.status(400).send([]);
+                return;
+            }
+            const nome = (name as string).replace(/-/g, " ")
+            console.log(nome);
+            if(!name){
+                res.status(400).send([]);
+            }else {
+                const users = await userService.searchUsers(nome);
+                res.status(200).json(users);
+            }
+        } catch (error){
+            res.status(500).json({ error: 'Erro ao buscar usuários' })
+        }
+
+
+    }
 }
 
 export default new UserController();
