@@ -3,6 +3,8 @@ import userController from '../controllers/userController';
 import authService from '../services/authService';
 import groupController from '../controllers/groupController';
 import participantController from '../controllers/participantController';
+import categoriesController from '../controllers/categoriesController';
+
 
 const handlerLogin: RequestHandler = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -64,6 +66,12 @@ class Routes {
 
         router.get('/user/groups/:email', participantController.getGroupsByParticipant);
         
+        router.post('/category/', categoriesController.createCategory)
+        router.put('/category/:id', categoriesController.updateCategory)
+        router.delete('/category/:id', categoriesController.deleteCategory)
+        router.get('/category/email', categoriesController.getAllCategory)
+        router.get('/category/:id', categoriesController.getCategory)
+
         return router;
     }
 }
