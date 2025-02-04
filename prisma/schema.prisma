@@ -20,7 +20,7 @@ model User {
    senha String
    groups Group[]
    participants Participants[]
-   
+   categories Categories[]
 }
 
 model Participants {
@@ -40,3 +40,9 @@ model Group {
   participants Participants[]
 }
 
+model Categories {
+  id Int @id @default(autoincrement())
+  name String
+  ownerEmail String
+  owner User @relation(fields: [ownerEmail], references: [email])
+}
