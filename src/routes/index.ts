@@ -1,9 +1,11 @@
 import { Router, Request, Response, RequestHandler } from 'express';
 import userController from '../controllers/userController';
 import authService from '../services/authService';
+
 import groupController from '../controllers/groupController';
 import participantController from '../controllers/participantController';
 import categoriesController from '../controllers/categoriesController';
+import taskRoutes from './taskRoutes';
 
 
 const handlerLogin: RequestHandler = async (req: Request, res: Response): Promise<any> => {
@@ -47,6 +49,10 @@ class Routes {
 
         router.get('/users/search', userController.dinamicSearch);
 
+        router.get('/user/:id', userController.getUserById)
+
+        router.get('/user/email/:email', userController.findUserByEmail)
+
         router.get('/user/:id', userController.getUserByIdWithoutPassword);
         router.get('/user/password/:id', userController.getUserById)
         router.get('/user/email/:email', userController.findUserByEmail);
@@ -71,6 +77,8 @@ class Routes {
         router.delete('/category/:id', categoriesController.deleteCategory)
         router.get('/category/email', categoriesController.getAllCategory)
         router.get('/category/:id', categoriesController.getCategory)
+
+        router.use(taskRoutes);
 
         return router;
     }
