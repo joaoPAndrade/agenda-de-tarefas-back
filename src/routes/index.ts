@@ -48,7 +48,7 @@ class Routes {
         router.get('/user', userController.getUserWithoutPassword);
         router.get('/user/password', userController.getUser);
 
-        router.get('/users/search', userController.dinamicSearch);
+        router.get('/users/search/:id', userController.dinamicSearch);
 
         router.get('/user/:id', userController.getUserById)
 

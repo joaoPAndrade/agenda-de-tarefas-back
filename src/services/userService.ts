@@ -2,6 +2,7 @@ import userRepository from '../repositories/userRepository';
 import { partialUserSchema, userSchema } from '../validation/userValidationSchema';
 import jwt from 'jsonwebtoken';
 import config from '../config';
+import groupRepository from '../repositories/groupRepository';
 interface User{
     id: number;
     email: string;
@@ -120,9 +121,15 @@ class UserService{
         }
     }
 
-    public async searchUsers(name: string): Promise<{user?: User[]}>{
+    public async searchUsers(name: string, groupId: number): Promise<{user?: User[], error?: string}>{
         if (!name) return {user: []};
-        const users = await userRepository.findUsersByName(name);
+
+        const groupExists = await groupRepository.findGroupById(groupId);
+        if(!groupExists){
+            return { error: `Group with id ${groupId} not found!`};
+        }
+
+        const users = await userRepository.findUsersNotInGroup(groupId, name);
         return {user: users}
     }
 }

@@ -64,25 +64,30 @@ class UserRepository {
         })
     }
 
-    async findUsersByName(name: string) {
+    public async findUsersNotInGroup(groupId: number, name: string){
       return await prisma.user.findMany({
-        where: {
-          name: {
-            contains: name,
-            mode: 'insensitive',
+          where: {
+              name: {
+                  contains: name,
+                  mode: 'insensitive',
+              },
+              participants: {
+                  none: {
+                      groupId: groupId,
+                  },
+              },
           },
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-        take: 5, // Limita para evitar sobrecarga
-        orderBy: {
-          name: 'asc',
-        },
+          select: {
+              id: true,
+              name: true,
+              email: true,
+          },
+          take: 5, // Limita para evitar sobrecarga
+          orderBy: {
+              name: 'asc',
+          },
       });
-    }
+  }
 }
 
 export default new UserRepository();

@@ -133,17 +133,18 @@ class UserController {
 
         try {
             const { name } = req.query;
+            const { id } = req.params;  
+            const intId = parseInt(id)
 
             if (!name) {
                 res.status(400).send([]);
                 return;
             }
             const nome = (name as string).replace(/-/g, " ")
-            console.log(nome);
             if(!name){
                 res.status(400).send([]);
             }else {
-                const users = await userService.searchUsers(nome);
+                const users = await userService.searchUsers(nome, intId);
                 res.status(200).json(users);
             }
         } catch (error){
