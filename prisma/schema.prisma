@@ -18,7 +18,34 @@ model User {
    email String @unique
    name String
    senha String
+   groups Group[]
+   participants Participants[]
+   categories Categories[]
 }
+
+
+model Participants {
+  id Int @id @default(autoincrement())
+  userEmail String
+  user User @relation(fields: [userEmail], references: [email])
+  groupId Int
+  group Group @relation(fields: [groupId], references: [id])
+}
+
+model Group {
+  id Int @id @default(autoincrement())
+  name String
+  description String
+  ownerEmail String
+  owner User @relation(fields: [ownerEmail], references: [email])
+  participants Participants[]
+}
+
+model Categories {
+  id Int @id @default(autoincrement())
+  name String
+  ownerEmail String
+  owner User @relation(fields: [ownerEmail], references: [email])
 
 model Task {
   id            String          @id @default(uuid()) // PK
@@ -69,4 +96,5 @@ enum Status {
   TODO
   ONGOING
   COMPLETED
+
 }

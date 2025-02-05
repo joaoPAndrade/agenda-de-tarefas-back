@@ -5,14 +5,23 @@ class UserController {
 
     public async getUser (req: Request, res: Response): Promise<void> {
 
-        const users = await userService.getAllUsers();
-        res.status(200).send(users);
+        const result = await userService.getAllUsers();
+
+        if(result.error){
+            res.status(400).send({error: result.error})
+        }
+        res.status(200).send(result.users);
 
     }
 
     public async getUserById (req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         const intId = parseInt(id);
+
+        if(isNaN(intId)){
+            res.status(400).send({error : 'Invalid user ID'});
+            return
+        }
 
         const result = await userService.getUserById(intId);
 
@@ -22,6 +31,37 @@ class UserController {
             res.status(200).send(result.user);
         }
 
+
+    }
+
+    public async getUserWithoutPassword (req: Request, res: Response): Promise<void> {
+        const result = await userService.getUserWithoutPassword();
+
+        if(result.error){
+            res.status(400).send({error: result.error})
+        } else {
+            res.status(200).send(result.users)
+        }
+
+
+    }
+
+    public async getUserByIdWithoutPassword (req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const intId = parseInt(id);
+
+        if(isNaN(intId)){
+            res.status(400).send({error : 'Invalid user ID'});
+            return
+        }
+
+        const result = await userService.getUserByIdWithoutPassword(intId);
+
+        if(result.error){
+            res.status(400).send({error: result.error});
+        } else {
+            res.status(200).send(result.user);
+        }
 
     }
 
@@ -87,6 +127,30 @@ class UserController {
         } catch (error) {
             res.status(500).send({ error: 'Internal server error' });
         }
+    }
+
+    public async dinamicSearch(req: Request, res: Response): Promise<void> {
+
+        try {
+            const { name } = req.query;
+
+            if (!name) {
+                res.status(400).send([]);
+                return;
+            }
+            const nome = (name as string).replace(/-/g, " ")
+            console.log(nome);
+            if(!name){
+                res.status(400).send([]);
+            }else {
+                const users = await userService.searchUsers(nome);
+                res.status(200).json(users);
+            }
+        } catch (error){
+            res.status(500).json({ error: 'Erro ao buscar usuários' })
+        }
+
+
     }
 }
 
