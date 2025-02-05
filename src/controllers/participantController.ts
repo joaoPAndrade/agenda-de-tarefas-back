@@ -5,7 +5,6 @@ class ParticipantController {
 
     public async getGroupsByParticipant(req: Request, res: Response): Promise<void> {
         const { email } = req.params;
-
         const result = await participantService.getGroupsByParticipant(email);
 
         if (result.error) {

@@ -3,6 +3,7 @@ import { groupSchema, partialGroupSchema } from '../validation/groupValidationSc
 import jwt from 'jsonwebtoken';
 import config from '../config';
 import userService from './userService';
+import participantService from './participantService';
 interface Group {
     name: string;
     description: string;
@@ -46,7 +47,9 @@ class GroupService {
         }
 
         const createdGroup = await groupRepository.createGroup(newGroup);
-
+        if(createdGroup){
+            this.addParticipantToGroup(createdGroup.id, newGroup.ownerEmail);
+        }
         return { group: createdGroup };
     }
 
