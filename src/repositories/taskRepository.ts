@@ -8,14 +8,14 @@ class TaskRepository {
         });
     }
 
-    public async updateTask(id: string, data: Partial<Task>): Promise<Task> {
+    public async updateTask(id: number, data: Partial<Task>): Promise<Task> {
         return await prisma.task.update({
             where: { id },
             data: data,
         });
     }
 
-    public async deleteTask(id: string): Promise<Task> {
+    public async deleteTask(id: number): Promise<Task> {
         return await prisma.task.delete({
             where: { id },
         });
@@ -26,20 +26,20 @@ class TaskRepository {
         return await prisma.task.findMany()
     }
 
-    public async findTaskById(id: string): Promise<Task | null> {
+    public async findTaskById(id: number): Promise<Task | null> {
         return await prisma.task.findUnique({
             where: { id },
         });
     }
 
-    public async findTasksByOwner(owner: string): Promise<Task[]> {
+    public async findTasksByOwner(ownerEmail: string): Promise<Task[]> {
         return await prisma.task.findMany({
-            where: { owner },
+            where: { ownerEmail: ownerEmail },
         });
     }
     
     public async findTasksByCategories(categories: string | string[]): Promise<Task[]> {
-        const categoriesArray = Array.isArray(categories) ? categories : [categories];
+        const categoriesArray = (Array.isArray(categories) ? categories : [categories]).map(Number);
     
         return await prisma.task.findMany({
             where: {

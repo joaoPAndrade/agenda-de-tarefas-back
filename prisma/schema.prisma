@@ -47,12 +47,16 @@ model Categories {
   ownerEmail String
   owner User @relation(fields: [ownerEmail], references: [email])
 
+  tasks TaskCategory[]
+
+}
+
 model Task {
-  id            String          @id @default(uuid()) // PK
+  id            Int        @id @default(autoincrement()) // PK
   title        String          @db.VarChar(50)
   comments   String?         @db.Text
   description     String?         @db.Text
-  owner          String          @db.VarChar(100)
+  ownerEmail          String          @db.VarChar(100)
   dateCreation   DateTime        @default(now())
   dateTask    DateTime  // data para conclusão
   dateConclusion DateTime? // data onde foi concluido
@@ -60,30 +64,19 @@ model Task {
   priority    Priority
   status        Status
 
-  categories    taskCategory[]
+  categories    TaskCategory[]
 
   @@map("task") 
 }
 
-model Category {
-  id   String          @id @default(uuid()) // PK
-  name String          @db.VarChar(200)
+model TaskCategory {
+  id         Int      @id @default(autoincrement())
+  taskId     Int
+  categoryId Int
+  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  category   Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
-  
-  tasks taskCategory[]
-
-  @@map("category") 
-}
-
-model taskCategory {
-  taskId    String  
-  categoryId String  
-
-  task      Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
-  @@id([taskId, categoryId]) 
-  @@map("task_category") 
+  @@unique([taskId, categoryId])
 }
 
 enum Priority {

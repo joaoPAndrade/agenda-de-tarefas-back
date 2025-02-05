@@ -17,7 +17,7 @@ class TaskService {
         return { tasks };
     }
 
-    public async getTaskById(id: string): Promise<TaskResponse> {
+    public async getTaskById(id: number): Promise<TaskResponse> {
         const task = await taskRepository.findTaskById(id);
         if (!task) {
             return { error: `Tarefa with id ${id} not found!` };
@@ -25,8 +25,8 @@ class TaskService {
         return { task };
     }
 
-    public async createTask(newTarefa: Omit<Task, 'id' | 'owner'>, owner: string): Promise<TaskResponse> {
-        const TaskData = { ...newTarefa, owner };
+    public async createTask(newTarefa: Omit<Task, 'id'>, ownerEmail: string): Promise<TaskResponse> {
+        const TaskData = { ...newTarefa, ownerEmail };
         const { error } = taskSchema.validate(TaskData);
         if (error) {
             return { error: `Validation error: ${error.details[0].message}` };
@@ -36,7 +36,7 @@ class TaskService {
         return { task: createdTask };
     }
 
-    public async updateTask(id: string, data: Partial<Task>): Promise<TaskResponse> {
+    public async updateTask(id: number, data: Partial<Task>): Promise<TaskResponse> {
         const { error } = partialTaskSchema.validate(data);
         if (error) {
             return { error: `Validation error: ${error.details[0].message}` };
@@ -51,7 +51,7 @@ class TaskService {
         return { task: updatedTask };
     }
 
-    public async deleteTask(id: string): Promise<TaskResponse> {
+    public async deleteTask(id: number): Promise<TaskResponse> {
         const task = await taskRepository.findTaskById(id);
         if (!task) {
             return { error: `Tarefa with id ${id} not found!` };
@@ -64,7 +64,7 @@ class TaskService {
     public async getTasksByCategory(categoria: string): Promise<TaskResponse> {
         const tasks = await taskRepository.findTasksByCategories(categoria);
         if (!tasks || tasks.length === 0) {
-            return { error: `No tarefas found for categoriaId ${categoria}` };
+            return { error: `No tarefas found for categoryId ${categoria}` };
         }
         return { tasks };
     }

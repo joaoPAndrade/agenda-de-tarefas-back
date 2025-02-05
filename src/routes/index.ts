@@ -5,7 +5,8 @@ import authService from '../services/authService';
 import groupController from '../controllers/groupController';
 import participantController from '../controllers/participantController';
 import categoriesController from '../controllers/categoriesController';
-import taskRoutes from './taskRoutes';
+import taskController from '../controllers/taskController';
+import taskCategoryController from '../controllers/taskCategoryController';
 
 
 const handlerLogin: RequestHandler = async (req: Request, res: Response): Promise<any> => {
@@ -72,15 +73,22 @@ class Routes {
 
         router.get('/user/groups/:email', participantController.getGroupsByParticipant);
         
-        router.post('/category/', categoriesController.createCategory)
+        router.post('/category', categoriesController.createCategory)
         router.put('/category/:id', categoriesController.updateCategory)
         router.delete('/category/:id', categoriesController.deleteCategory)
         router.get('/category/email', categoriesController.getAllCategory)
         router.get('/category/:id', categoriesController.getCategory)
 
-        router.use(taskRoutes);
+        router.get('/task', taskController.getTasks);
+        router.get('/task/:id', taskController.getTaskById);
+        router.post('/task', taskController.createTask);
+        router.put('/task/:id', taskController.updateTask);
+        router.delete('/task/:id', taskController.deleteTask);
+        router.get('/task/category/categoryId:', taskController.findTasksByCategories);
+        router.post("/task/category", taskCategoryController.addCategoryToTask)
 
         return router;
+
     }
 }
 

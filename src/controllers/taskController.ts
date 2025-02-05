@@ -13,9 +13,10 @@ class TaskController {
 
     public async getTaskById(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
+        const intId = parseInt(id)
         
     
-        const result = await taskService.getTaskById(id);
+        const result = await taskService.getTaskById(intId);
 
         if (result.error) {
             res.status(400).send({ error: result.error });
@@ -27,23 +28,25 @@ class TaskController {
     
     public async createTask(req: Request, res: Response): Promise<void> {
         const taskData = req.body;
-        // const dono = req.user.id; 
+        const ownerEmail = taskData.ownerEmail;
 
-        // const result = await taskService.createTarefa(tarefaData, dono);
+        const result = await taskService.createTask(taskData, ownerEmail);
 
-        // if (result.error) {
-        //     res.status(400).send({ error: result.error });
-        // } else {
-        //     res.status(201).send({ tarefa: result.tarefa });
-        // }
+        if (result.error) {
+            res.status(400).send({ error: result.error });
+        } else {
+            res.status(201).send({ tarefa: result.task });
+        }
     }
 
     public async updateTask(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         const taskData = req.body;
 
+        const intId = parseInt(id)
+
     
-        const result = await taskService.updateTask(id, taskData);
+        const result = await taskService.updateTask(intId, taskData);
 
         if (result.error) {
             res.status(400).send({ error: result.error });
@@ -55,7 +58,9 @@ class TaskController {
     public async deleteTask(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
 
-        const result = await taskService.deleteTask(id);
+        const intId = parseInt(id)
+
+        const result = await taskService.deleteTask(intId);
 
         if (result.error) {
             res.status(500).send({ error: result.error });
@@ -85,6 +90,7 @@ class TaskController {
             res.status(500).send({ error: 'Internal server error' });
         }
     }
+
     
 }
 
