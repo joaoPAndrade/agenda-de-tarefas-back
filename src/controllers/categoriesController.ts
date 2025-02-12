@@ -52,8 +52,11 @@ class CategoriesController {
 
         const response = await categoriesServices.deleteCategory({ id: id_, ownerEmail })
         if (response.error) {
+        console.log("aqui1")
+
             return res.status(404).json({ error: response.error })
         }
+        console.log("aqui2")
         res.status(204).send();
     }
 
@@ -77,11 +80,13 @@ class CategoriesController {
     }
 
     public async getAllCategory(req: Request, res: Response): Promise<any> {
-        const { ownerEmail } = req.body;
-        if (!ownerEmail) {
-            return res.status(400).json({ error: "Owner email is required" });
+        const { ownerEmail } = req.query;
+
+        if (!ownerEmail || Array.isArray(ownerEmail) || typeof ownerEmail !== 'string') {
+            return res.status(400).json({ error: "Owner email is required and must be a string" });
         }
-        const response = await categoriesServices.getAllCategory(ownerEmail)
+
+        const response = await categoriesServices.getAllCategory(ownerEmail);
 
         if (response.error) {
             return res.status(404).json({ error: response.error })

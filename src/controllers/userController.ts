@@ -74,7 +74,7 @@ class UserController {
         if(result.error){
             res.status(400).send({error: result.error})
         }else {
-            res.status(201).send({user: result.user, token:result.token});
+            res.status(201).send({user: result.user});
         }
 
 
@@ -130,7 +130,6 @@ class UserController {
     }
 
     public async dinamicSearch(req: Request, res: Response): Promise<void> {
-
         try {
             const { name } = req.query;
 
@@ -140,7 +139,7 @@ class UserController {
             }
             const nome = (name as string).replace(/-/g, " ")
             console.log(nome);
-            if(!name){
+            if(!nome){
                 res.status(400).send([]);
             }else {
                 const users = await userService.searchUsers(nome);

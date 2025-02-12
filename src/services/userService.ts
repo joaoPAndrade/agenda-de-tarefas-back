@@ -59,7 +59,7 @@ class UserService{
 
     }
 
-    public async createUser(newUser: User): Promise<{ error?: string, user?: User; token?: string }> {
+    public async createUser(newUser: User): Promise<{ error?: string, user?: User}> {
         const { error } = userSchema.validate(newUser);
     
         if (error) {
@@ -76,7 +76,7 @@ class UserService{
     
         const token = jwt.sign({ id: createdUser.id, email: createdUser.email }, config.jwtSecret, { expiresIn: '1h' });
     
-        return { user: createdUser, token };
+        return { user: createdUser};
     }
     
 
@@ -123,6 +123,7 @@ class UserService{
     public async searchUsers(name: string): Promise<{user?: User[]}>{
         if (!name) return {user: []};
         const users = await userRepository.findUsersByName(name);
+        console.log(users)
         return {user: users}
     }
 }

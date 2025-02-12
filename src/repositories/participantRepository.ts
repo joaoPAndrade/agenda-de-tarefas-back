@@ -14,10 +14,16 @@ class ParticipantRepository {
                 user: {
                     email: email,
                 },
+                group: {
+                    ownerEmail: {
+                        not: email
+                    }
+                }
             } ,
             include: {
                 group: true,
-            }
+            },
+            distinct: ['id']
         }
         )
 
