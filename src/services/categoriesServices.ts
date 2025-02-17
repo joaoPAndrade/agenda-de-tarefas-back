@@ -4,6 +4,7 @@ import { categorySchema, categorySchema_ } from "../validation/categoryValidatio
 import userService from "./userService";
 
 type Category = {
+    id: number;
     name: string;
     ownerEmail: string;
 }

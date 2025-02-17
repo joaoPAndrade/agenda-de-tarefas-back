@@ -20,7 +20,9 @@ model User {
    senha String
    groups Group[]
    participants Participants[]
-   categories Categories[]
+   categories Category[]
+
+   @@map("user")
 }
 
 
@@ -30,6 +32,8 @@ model Participants {
   user User @relation(fields: [userEmail], references: [email])
   groupId Int
   group Group @relation(fields: [groupId], references: [id])
+
+  @@map("participants")
 }
 
 model Group {
@@ -39,16 +43,19 @@ model Group {
   ownerEmail String
   owner User @relation(fields: [ownerEmail], references: [email])
   participants Participants[]
+
+  @@map("group")
 }
 
-model Categories {
+model Category {
   id Int @id @default(autoincrement())
   name String
   ownerEmail String
   owner User @relation(fields: [ownerEmail], references: [email])
 
-  tasks TaskCategory[]
+  tasks Task[]
 
+	@@map("category")
 }
 
 model Task {
@@ -64,20 +71,12 @@ model Task {
   priority    Priority
   status        Status
 
-  categories    TaskCategory[]
+  categoryId Int
+  category    Category @relation(fields: [categoryId], references: [id])
 
   @@map("task") 
 }
 
-model TaskCategory {
-  id         Int      @id @default(autoincrement())
-  taskId     Int
-  categoryId Int
-  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  category   Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
-  @@unique([taskId, categoryId])
-}
 
 enum Priority {
   LOW

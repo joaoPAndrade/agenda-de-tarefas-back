@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import categoriesServices from '../services/categoriesServices';
-import { Categories } from '@prisma/client';
-import { error } from 'console';
 
 type categoryBase = {
     name: string;

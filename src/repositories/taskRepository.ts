@@ -43,22 +43,11 @@ class TaskRepository {
     
         return await prisma.task.findMany({
             where: {
-                categories: {
-                    some: {
-                        categoryId: {
-                            in: categoriesArray, 
-                        },
-                    },
-                },
-            },
-            include: {
-                categories: {
-                    include: {
-                        category: true,
-                    },
-                },
-            },
-        });
+                categoryId: {
+                    in: categoriesArray
+                }
+            }
+        })
     }
     
     
