@@ -76,6 +76,7 @@ class UserRepository {
               name: 'asc',
           },
       });
+    }
 
   public async findAllUsers() {
 
@@ -114,6 +115,7 @@ class UserRepository {
       },
     });
 
+    
   }
 }
 
