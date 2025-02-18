@@ -40,7 +40,7 @@ class CategoriesRepository {
         await prisma.task.updateMany({
             where: {categoryId: id},
             data:{
-                categoryId: -1
+                categoryId: null
             }
         })
         

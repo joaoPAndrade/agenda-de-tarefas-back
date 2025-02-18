@@ -71,8 +71,8 @@ model Task {
   status         Status
   groupId        Int
 
-  categoryId Int
-  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+  Category   Category? @relation(fields: [categoryId], references: [id])
 
   @@map("task")
 }
