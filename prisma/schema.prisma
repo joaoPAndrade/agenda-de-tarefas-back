@@ -14,69 +14,68 @@ datasource db {
 }
 
 model User {
-   id Int @id @default(autoincrement())
-   email String @unique
-   name String
-   senha String
-   groups Group[]
-   participants Participants[]
-   categories Category[]
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  name         String
+  senha        String
+  groups       Group[]
+  participants Participants[]
+  categories   Category[]
 
-   @@map("user")
+  @@map("user")
 }
 
-
 model Participants {
-  id Int @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   userEmail String
-  user User @relation(fields: [userEmail], references: [email])
-  groupId Int
-  group Group @relation(fields: [groupId], references: [id])
+  user      User   @relation(fields: [userEmail], references: [email])
+  groupId   Int
+  group     Group  @relation(fields: [groupId], references: [id])
 
   @@map("participants")
 }
 
 model Group {
-  id Int @id @default(autoincrement())
-  name String
-  description String
-  ownerEmail String
-  owner User @relation(fields: [ownerEmail], references: [email])
+  id           Int            @id @default(autoincrement())
+  name         String
+  description  String
+  ownerEmail   String
+  owner        User           @relation(fields: [ownerEmail], references: [email])
   participants Participants[]
 
   @@map("group")
 }
 
 model Category {
-  id Int @id @default(autoincrement())
-  name String
+  id         Int    @id @default(autoincrement())
+  name       String
   ownerEmail String
-  owner User @relation(fields: [ownerEmail], references: [email])
+  owner      User   @relation(fields: [ownerEmail], references: [email])
 
   tasks Task[]
 
-	@@map("category")
+  @@map("category")
 }
 
 model Task {
-  id            Int        @id @default(autoincrement()) // PK
-  title        String          @db.VarChar(50)
-  comments   String?         @db.Text
-  description     String?         @db.Text
-  ownerEmail          String          @db.VarChar(100)
-  dateCreation   DateTime        @default(now())
-  dateTask    DateTime  // data para conclusão
+  id             Int       @id @default(autoincrement()) // PK
+  title          String    @db.VarChar(50)
+  comments       String?   @db.Text
+  description    String?   @db.Text
+  ownerEmail     String    @db.VarChar(100)
+  dateCreation   DateTime  @default(now())
+  dateTask       DateTime // data para conclusão
   dateConclusion DateTime? // data onde foi concluido
-  isRecurrent  Boolean
-  priority    Priority
-  status        Status
+  isRecurrent    Boolean
+  priority       Priority
+  status         Status
+  groupId        Int
 
   categoryId Int
-  category    Category @relation(fields: [categoryId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
 
-  @@map("task") 
+  @@map("task")
 }
-
 
 enum Priority {
   LOW
@@ -88,5 +87,4 @@ enum Status {
   TODO
   ONGOING
   COMPLETED
-
 }

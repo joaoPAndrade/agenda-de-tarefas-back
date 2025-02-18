@@ -33,7 +33,17 @@ const taskSchema = Joi.object({
     }),
     dateCreation: Joi.date().optional().messages({
         'date.base': 'Completion date should be a valid date'
-    })
+    }),
+    groupId: Joi.number().required().messages({
+        'string.base': 'GroupId should be a number',
+        'string.empty': 'GroupId cannot be an empty field',
+        'any.required': 'GroupId is a required field'
+    }),
+    categoryId: Joi.number().required().messages({
+        'string.base': 'CategoryId should be a number',
+        'string.empty': 'CategoryId cannot be an empty field',
+        'any.required': 'CategoryId is a required field'
+    }),
 });
 
 const partialTaskSchema = Joi.object({
@@ -63,7 +73,15 @@ const partialTaskSchema = Joi.object({
     }),
     dateConclusion: Joi.date().messages({
         'date.base': 'Completion date should be a valid date'
-    })
+    }),
+    groupId: Joi.number().messages({
+        'string.base': 'GroupId should be a number',
+        'string.empty': 'GroupId cannot be an empty field',
+    }),
+    categoryId: Joi.number().messages({
+        'string.base': 'CategoryId should be a number',
+        'string.empty': 'CategoryId cannot be an empty field',
+    }),
 });
 
 export { taskSchema, partialTaskSchema };

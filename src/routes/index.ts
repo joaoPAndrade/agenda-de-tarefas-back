@@ -75,7 +75,7 @@ class Routes {
         router.post('/category', categoriesController.createCategory)
         router.put('/category/:id', categoriesController.updateCategory)
         router.delete('/category/:id', categoriesController.deleteCategory)
-        router.get('/category/email', categoriesController.getAllCategory)
+        router.post('/category/email', categoriesController.getAllCategory) // Get de todas as categorias por email. Deve-se mandar o email no body da requisição
         router.get('/category/:id', categoriesController.getCategory)
 
         router.get('/task', taskController.getTasks);

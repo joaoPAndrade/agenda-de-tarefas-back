@@ -1,9 +1,14 @@
 import { prisma } from '../../prisma/client';
 import { Category } from '@prisma/client';
 
+type CategoryBody = {
+    name: string;
+    ownerEmail: string;
+}
+
 
 class CategoriesRepository {
-    public async createCategory(newCategorie: Category): Promise<Category> {
+    public async createCategory(newCategorie: CategoryBody): Promise<Category> {
         return await prisma.category.create({
             data: newCategorie
         })
@@ -30,7 +35,15 @@ class CategoriesRepository {
             }
         })
     }
-    public async deleteCateogyr({ id, ownerEmail }: { id: number, ownerEmail: string }): Promise<Category> {
+    public async deleteCategory({ id, ownerEmail }: { id: number, ownerEmail: string }): Promise<Category> {
+        
+        await prisma.task.updateMany({
+            where: {categoryId: id},
+            data:{
+                categoryId: -1
+            }
+        })
+        
         return await prisma.category.delete({
             where: { id: id, ownerEmail: ownerEmail }
         })

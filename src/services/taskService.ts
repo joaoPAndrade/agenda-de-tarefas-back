@@ -1,6 +1,9 @@
 import { Task } from '@prisma/client';
 import taskRepository from '../repositories/taskRepository'; 
 import { taskSchema, partialTaskSchema } from '../validation/taskValidationSchema'; 
+import userController from '../controllers/userController';
+import userService from './userService';
+import groupService from './groupService';
 
 interface TaskResponse {
     error?: string;
@@ -26,13 +29,25 @@ class TaskService {
     }
 
     public async createTask(newTarefa: Omit<Task, 'id'>, ownerEmail: string): Promise<TaskResponse> {
-        const TaskData = { ...newTarefa, ownerEmail };
-        const { error } = taskSchema.validate(TaskData);
+        const taskData = { ...newTarefa, ownerEmail };
+        const { error } = taskSchema.validate(taskData);
         if (error) {
             return { error: `Validation error: ${error.details[0].message}` };
         }
 
-        const createdTask = await taskRepository.createTask(TaskData);
+        const owner = await userService.getUserByEmail(ownerEmail);
+
+        if(owner.error){
+            return {error: "User/Owner not found!"};
+        }
+
+        const group = await groupService.getGroupById(taskData.groupId);
+
+        if(group.error){
+            return {error: "Group not found!"};
+        }
+
+        const createdTask = await taskRepository.createTask(taskData);
         return { task: createdTask };
     }
 

@@ -108,6 +108,7 @@ class UserService{
     }
     public async getUserByEmail(email: string): Promise<{ error?: string, user?: User }> {
         try {
+            
             const user = await userRepository.findUserByEmail(email);
 
             if (!user) {
