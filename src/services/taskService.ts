@@ -97,6 +97,23 @@ class TaskService {
         }
         return { tasks };
     }
+
+    public async concludeTask(id: number): Promise<{error?: string}>{
+        if(isNaN(id)){
+            return {error: "Id is not a number!"};
+        }
+
+        const task = await this.getTaskById(id);
+
+        if(task.error){
+            return {error: "Task not found!"};
+        }
+
+        const result = taskRepository.concludeTask(id);
+
+        return {}
+
+    }
 }
 
 export default new TaskService();

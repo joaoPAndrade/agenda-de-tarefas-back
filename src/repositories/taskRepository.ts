@@ -1,6 +1,6 @@
 import { prisma } from '../../prisma/client';
 import { Task } from '@prisma/client';
-
+import { Status } from '@prisma/client';
 class TaskRepository {
     public async createTask(newTask: Omit<Task, 'id'>): Promise<Task> {
         return await prisma.task.create({
@@ -48,6 +48,20 @@ class TaskRepository {
                 }
             }
         })
+    }
+
+    public async concludeTask(id: number){
+
+        return await prisma.task.update({
+            where:{
+                id,
+            },
+            data:{
+                dateConclusion: new Date(),
+                status: Status.COMPLETED
+            }
+        })
+
     }
     
     

@@ -91,6 +91,24 @@ class TaskController {
         }
     }
 
+    public async concludeTask(req: Request, res: Response): Promise<void> {
+
+        const { id } = req.params;
+
+        const intId = parseInt(id);
+
+
+        const result = await taskService.concludeTask(intId);
+
+        if(result.error){
+            res.status(404).send({error: result.error})
+        }else{
+            res.status(200).send({message: "Task completed successfully"})
+        }
+
+
+    }
+
     
 }
 

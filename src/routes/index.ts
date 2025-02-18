@@ -84,6 +84,7 @@ class Routes {
         router.put('/task/:id', taskController.updateTask);
         router.delete('/task/:id', taskController.deleteTask);
         router.get('/task/category/categoryId:', taskController.findTasksByCategories);
+        router.put('/task/conclude/:id', taskController.concludeTask)
 
         return router;
 

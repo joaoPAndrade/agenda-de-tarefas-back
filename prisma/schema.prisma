@@ -64,8 +64,8 @@ model Task {
   description    String?   @db.Text
   ownerEmail     String    @db.VarChar(100)
   dateCreation   DateTime  @default(now())
-  dateTask       DateTime // data para conclusão
-  dateConclusion DateTime? // data onde foi concluido
+  dateTask       DateTime // Data limite para conclusão
+  dateConclusion DateTime? // Data quando acabei. NECESSARIAMENTE dateConclusion >= dateTask
   isRecurrent    Boolean
   priority       Priority
   status         Status
