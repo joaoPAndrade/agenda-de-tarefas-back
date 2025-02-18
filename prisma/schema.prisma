@@ -69,7 +69,7 @@ model Task {
   isRecurrent    Boolean
   priority       Priority
   status         Status
-  groupId        Int
+  groupId        Int?
 
   categoryId Int?
   Category   Category? @relation(fields: [categoryId], references: [id])

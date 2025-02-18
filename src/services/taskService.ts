@@ -42,6 +42,10 @@ class TaskService {
             return {error: "User/Owner not found!"};
         }
 
+        if (taskData.groupId === null) {
+            return { error: "Group ID cannot be null" };
+        }
+
         const group = await groupService.getGroupById(taskData.groupId);
 
         if(group.error){
