@@ -78,7 +78,6 @@ class CategoriesController {
     public async getAllCategory(req: Request, res: Response): Promise<any> {
         const { ownerEmail } = req.body;
 
-        console.log(ownerEmail);
 
         if (!ownerEmail || Array.isArray(ownerEmail) || typeof ownerEmail !== 'string') {
             return res.status(400).json({ error: "Owner email is required and must be a string" });

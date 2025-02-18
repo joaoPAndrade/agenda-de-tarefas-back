@@ -4,6 +4,7 @@ import { taskSchema, partialTaskSchema } from '../validation/taskValidationSchem
 import userController from '../controllers/userController';
 import userService from './userService';
 import groupService from './groupService';
+import categoriesServices from './categoriesServices';
 
 interface TaskResponse {
     error?: string;
@@ -45,6 +46,15 @@ class TaskService {
 
         if(group.error){
             return {error: "Group not found!"};
+        }
+
+        if (taskData.categoryId === null) {
+            return { error: "Category ID cannot be null" };
+        }
+        const category = await categoriesServices.getCategory(taskData.categoryId);
+
+        if(category.error){
+            return {error: "Category not found!"}
         }
 
         const createdTask = await taskRepository.createTask(taskData);
