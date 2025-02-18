@@ -42,6 +42,17 @@ class UserRepository {
         }
       })
 
+      await prisma.task.deleteMany({
+        where: {
+          ownerEmail: user.email
+        }
+      })
+      await prisma.category.deleteMany({
+        where: {
+          ownerEmail: user.email
+        }
+      })
+
 
 
       return await prisma.user.delete({
