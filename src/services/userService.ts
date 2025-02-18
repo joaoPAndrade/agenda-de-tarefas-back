@@ -60,7 +60,7 @@ class UserService{
 
     }
 
-    public async createUser(newUser: User): Promise<{ error?: string, user?: User; token?: string }> {
+    public async createUser(newUser: User): Promise<{ error?: string, user?: User}> {
         const { error } = userSchema.validate(newUser);
     
         if (error) {
@@ -77,7 +77,7 @@ class UserService{
     
         const token = jwt.sign({ id: createdUser.id, email: createdUser.email }, config.jwtSecret, { expiresIn: '1h' });
     
-        return { user: createdUser, token };
+        return { user: createdUser};
     }
     
 
@@ -125,12 +125,14 @@ class UserService{
     public async searchUsers(name: string, groupId: number): Promise<{user?: User[], error?: string}>{
         if (!name) return {user: []};
 
+
         const groupExists = await groupRepository.findGroupById(groupId);
         if(!groupExists){
             return { error: `Group with id ${groupId} not found!`};
         }
 
         const users = await userRepository.findUsersNotInGroup(groupId, name);
+
         return {user: users}
     }
 }

@@ -30,8 +30,10 @@ class ParticipantService {
             description: group.description,
             ownerEmail: group.ownerEmail,
         }));
-
-        if (!groups || groups.length === 0) {
+        if(groups.length === 0){
+            return { groups };
+        }
+        if (!groups) {
             return { error: `No groups found for participant with email ${userEmail}` };
         }
 
