@@ -48,6 +48,9 @@ class CategoriesServices {
             return { error: "User not found" };
         }
         const response = await categoriesRepository.findAllCategories(ownerEmail)
+        if (!response || response.length === 0) {
+            return { category: [] };
+        }
 
         return { category: response }
     }
