@@ -63,6 +63,20 @@ class TaskRepository {
         })
 
     }
+
+    public async timeSpentOnActivity(initialDate: Date, finalDate: Date, categoryId: number): Promise<Task[]>{
+
+        const tasks = await prisma.task.findMany({
+            where: {
+                categoryId: categoryId,
+                dateCreation: { gte: initialDate },
+                dateTask: { lte: finalDate },
+                status: 'COMPLETED'
+            }
+        })
+
+        return tasks
+    }
     
     
 }

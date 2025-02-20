@@ -106,9 +106,23 @@ class TaskController {
             res.status(200).send({message: "Task completed successfully"})
         }
 
-
     }
 
+
+    public async timeSpentOnActivity(req: Request, res: Response){
+
+        const { initialDate, finalDate, categoryId} = req.body;
+
+        const result = await taskService.timeSpentOnActivity(initialDate, finalDate, categoryId)
+
+
+        if(result.error){
+            res.status(404).send({ error: result.error})
+        } else {
+            res.status(200).send(result)
+        }
+
+    }
     
 }
 

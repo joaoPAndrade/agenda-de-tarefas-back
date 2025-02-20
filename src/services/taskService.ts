@@ -114,6 +114,29 @@ class TaskService {
         return {}
 
     }
+
+    public async timeSpentOnActivity(initialDate: Date, finalDate: Date, categoryId: number): Promise<{error?: string, hours?: number}> {
+
+        const category = await categoriesServices.getCategory(categoryId);
+
+        if(category.error){
+            return {error: category.error}
+        }
+
+        const tasks = await taskRepository.timeSpentOnActivity(initialDate, finalDate, categoryId);
+
+        const totalMilliseconds = tasks.reduce((sum, task) => {
+            const dateConclusion = new Date(task.dateConclusion).getTime();
+            const dateCreation = new Date(task.dateCreation).getTime();
+            return sum + (dateConclusion - dateCreation);
+        }, 0);
+
+        const totalHours = totalMilliseconds / (1000 * 60 * 60);
+
+        return { hours : totalHours};
+
+
+    }
 }
 
 export default new TaskService();
