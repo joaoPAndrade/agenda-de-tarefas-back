@@ -31,7 +31,7 @@ const taskSchema = Joi.object({
     isRecurrent: Joi.boolean().optional().messages({
         'boolean.base': 'Recurring should be a type of boolean'
     }),
-    dateCreation: Joi.date().optional().messages({
+    dateConclusion: Joi.date().optional().messages({
         'date.base': 'Completion date should be a valid date'
     }),
     groupId: Joi.number().required().messages({

@@ -77,7 +77,24 @@ class TaskRepository {
 
         return tasks
     }
+
+    public async getTaskByMonth(month: number){
+
+        const year = new Date().getFullYear();
+        const startDate = new Date(year, month - 1, 1);
+        const endDate = new Date(year, month, 1);
     
+        const tasks = await prisma.task.findMany({
+            where: {
+                dateConclusion: {
+                    gte: startDate,
+                    lt: endDate
+                }
+            }
+        });
+    
+        return tasks;
+    }
     
 }
 

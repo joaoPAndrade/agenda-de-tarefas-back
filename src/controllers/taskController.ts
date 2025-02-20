@@ -123,6 +123,24 @@ class TaskController {
         }
 
     }
+
+    public async getTaskByMonth(req: Request, res: Response){
+
+        const { month } = req.params;
+
+        const intMonth = parseInt(month)
+
+        const result = await taskService.getTaskByMonth(intMonth);
+
+        if(result.error){
+            res.status(404).send({ error: result.error})
+        } else {
+            res.status(200).send(result)
+        }
+
+
+
+    }
     
 }
 

@@ -135,7 +135,17 @@ class TaskService {
 
         return { hours : totalHours};
 
+    }
 
+    public async getTaskByMonth(month: number): Promise<TaskResponse>{
+
+        if(month > 11 || month < 0){
+            return {error: "Invalid month!"};
+        }
+
+        const tasks = await taskRepository.getTaskByMonth(month);
+
+        return {tasks};
     }
 }
 

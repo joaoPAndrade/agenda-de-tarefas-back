@@ -78,9 +78,10 @@ class Routes {
         router.post('/category/email', categoriesController.getAllCategory) // Get de todas as categorias por email. Deve-se mandar o email no body da requisição
         router.get('/category/:id', categoriesController.getCategory)
 
+        router.put("/task/month/:month", taskController.getTaskByMonth)
+        router.get('/task/:id', taskController.getTaskById);
         router.put('/task/time', taskController.timeSpentOnActivity);
         router.get('/task', taskController.getTasks);
-        router.get('/task/:id', taskController.getTaskById);
         router.post('/task', taskController.createTask);
         router.put('/task/:id', taskController.updateTask);
         router.delete('/task/:id', taskController.deleteTask);
