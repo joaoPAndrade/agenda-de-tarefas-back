@@ -64,6 +64,20 @@ class TaskRepository {
 
     }
 
+    public async unconcludeTask(id: number){
+
+        return await prisma.task.update({
+            where:{
+                id,
+            },
+            data:{
+                dateConclusion: null,
+                status: Status.ONGOING
+            }
+        })
+
+    }
+
     public async timeSpentOnActivity(initialDate: Date, finalDate: Date, categoryId: number): Promise<Task[]>{
 
         const tasks = await prisma.task.findMany({

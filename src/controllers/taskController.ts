@@ -108,8 +108,24 @@ class TaskController {
 
     }
 
+    public async unconcludeTask(req: Request, res: Response): Promise<void>{
 
-    public async timeSpentOnActivity(req: Request, res: Response){
+        const { id } = req.params;
+
+        const intId = parseInt(id);
+
+        const result = await taskService.unconcludeTask(intId);
+
+        if(result.error){
+            res.status(404).send({error: result.error})
+        }else{
+            res.status(200).send({message: "Task unconcluded"})
+        }
+
+    }
+
+
+    public async timeSpentOnActivity(req: Request, res: Response): Promise<void>{
 
         const { initialDate, finalDate, categoryId} = req.body;
 
@@ -124,7 +140,7 @@ class TaskController {
 
     }
 
-    public async getTaskByMonth(req: Request, res: Response){
+    public async getTaskByMonth(req: Request, res: Response): Promise<void>{
 
         const { month } = req.params;
 

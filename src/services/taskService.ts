@@ -115,6 +115,29 @@ class TaskService {
 
     }
 
+    public async unconcludeTask(id: number): Promise<{error?: string}>{
+        if(isNaN(id)){
+            return {error: "Id is not a number!"};
+        }
+
+        const task = await this.getTaskById(id);
+
+        if(task.error){
+            return {error: "Task not found!"};
+        }
+
+        if(task.task?.status == "ONGOING"){
+            return {error: "Task isn't concluded"}
+        }
+
+        const result = taskRepository.unconcludeTask(id);
+
+        return {}
+
+
+
+    }
+
     public async timeSpentOnActivity(initialDate: Date, finalDate: Date, categoryId: number): Promise<{error?: string, hours?: number}> {
 
         const category = await categoriesServices.getCategory(categoryId);
@@ -126,7 +149,7 @@ class TaskService {
         const tasks = await taskRepository.timeSpentOnActivity(initialDate, finalDate, categoryId);
 
         const totalMilliseconds = tasks.reduce((sum, task) => {
-            const dateConclusion = new Date(task.dateConclusion).getTime();
+            const dateConclusion = task.dateConclusion ? new Date(task.dateConclusion).getTime() : 0;
             const dateCreation = new Date(task.dateCreation).getTime();
             return sum + (dateConclusion - dateCreation);
         }, 0);
