@@ -153,8 +153,22 @@ class TaskController {
         } else {
             res.status(200).send(result)
         }
+    }
 
+    public async addCategoryToTask(req: Request, res: Response): Promise<void>{
 
+        const { id } = req.params;
+        const { categoryId } = req.body;
+        
+        const intTaskId = parseInt(id);
+        
+        const result = await taskService.addCategoryToTask(intTaskId, categoryId);
+
+        if(result.error){
+            res.status(404).send({ error: result.error})
+        } else {
+            res.status(200).send({message: "Category added successfully!"})
+        }
 
     }
     

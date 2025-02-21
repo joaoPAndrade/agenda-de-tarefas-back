@@ -109,6 +109,17 @@ class TaskRepository {
     
         return tasks;
     }
+
+    public async addCategoryToTask(taskId: number, categoryId: number){
+        return await prisma.task.update({
+            where: {
+                id: taskId
+            },
+            data: {
+                categoryId: categoryId
+            }
+        })
+    }
     
 }
 

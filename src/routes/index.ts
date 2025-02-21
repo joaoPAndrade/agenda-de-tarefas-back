@@ -88,6 +88,7 @@ class Routes {
         router.get('/task/category/categoryId:', taskController.findTasksByCategories);
         router.put('/task/conclude/:id', taskController.concludeTask);
         router.put('/task/unconclude/:id', taskController.unconcludeTask);
+        router.put('/task/category/:id', taskController.addCategoryToTask);
 
         return router;
 

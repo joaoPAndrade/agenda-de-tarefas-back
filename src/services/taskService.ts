@@ -170,6 +170,30 @@ class TaskService {
 
         return {tasks};
     }
+
+    public async addCategoryToTask(taskId: number, categoryId: number): Promise<{error?: string}>{
+
+        if(isNaN(taskId)){
+            return{ error: "TaskId must be a integer."};
+        }
+
+        const task = await this.getTaskById(taskId);
+
+        const category = await categoriesServices.getCategory(categoryId);
+
+        if(task.error){
+            return { error: task.error};
+        }
+
+        if(category.error){
+            return { error: category.error }
+        }
+
+        const result = taskRepository.addCategoryToTask(taskId, categoryId);
+
+        return {}
+
+    }
 }
 
 export default new TaskService();
