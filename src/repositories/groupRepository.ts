@@ -22,6 +22,15 @@ class GroupRepository {
                 groupId: id,
             },
         });
+
+        await prisma.task.updateMany({
+            where: {
+                groupId: id,
+            },
+            data: {
+                groupId: null
+            }
+        })
         return await prisma.group.delete({
             where: { id },
         });

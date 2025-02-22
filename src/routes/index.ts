@@ -1,9 +1,11 @@
 import { Router, Request, Response, RequestHandler } from 'express';
 import userController from '../controllers/userController';
 import authService from '../services/authService';
+
 import groupController from '../controllers/groupController';
 import participantController from '../controllers/participantController';
 import categoriesController from '../controllers/categoriesController';
+import taskController from '../controllers/taskController';
 
 
 const handlerLogin: RequestHandler = async (req: Request, res: Response): Promise<any> => {
@@ -45,7 +47,11 @@ class Routes {
         router.get('/user', userController.getUserWithoutPassword);
         router.get('/user/password', userController.getUser);
 
-        router.get('/users/search', userController.dinamicSearch);
+        router.get('/users/search/:id', userController.dinamicSearch);
+
+        router.get('/user/:id', userController.getUserById)
+
+        router.get('/user/email/:email', userController.findUserByEmail)
 
         router.get('/user/:id', userController.getUserByIdWithoutPassword);
         router.get('/user/password/:id', userController.getUserById)
@@ -66,13 +72,26 @@ class Routes {
 
         router.get('/user/groups/:email', participantController.getGroupsByParticipant);
         
-        router.post('/category/', categoriesController.createCategory)
+        router.post('/category', categoriesController.createCategory)
         router.put('/category/:id', categoriesController.updateCategory)
         router.delete('/category/:id', categoriesController.deleteCategory)
-        router.get('/category/email', categoriesController.getAllCategory)
+        router.post('/category/email', categoriesController.getAllCategory) // Get de todas as categorias por email. Deve-se mandar o email no body da requisição
         router.get('/category/:id', categoriesController.getCategory)
 
+        router.put("/task/month/:month", taskController.getTaskByMonth)
+        router.get('/task/:id', taskController.getTaskById);
+        router.put('/task/time', taskController.timeSpentOnActivity);
+        router.get('/task', taskController.getTasks);
+        router.post('/task', taskController.createTask);
+        router.put('/task/:id', taskController.updateTask);
+        router.delete('/task/:id', taskController.deleteTask);
+        router.get('/task/category/categoryId:', taskController.findTasksByCategories);
+        router.put('/task/conclude/:id', taskController.concludeTask);
+        router.put('/task/unconclude/:id', taskController.unconcludeTask);
+        router.put('/task/category/:id', taskController.addCategoryToTask);
+
         return router;
+
     }
 }
 

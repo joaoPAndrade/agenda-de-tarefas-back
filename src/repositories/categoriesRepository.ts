@@ -1,42 +1,50 @@
 import { prisma } from '../../prisma/client';
-import { Categories } from '@prisma/client';
+import { Category } from '@prisma/client';
 
-type Category = {
+type CategoryBody = {
     name: string;
     ownerEmail: string;
 }
 
 
 class CategoriesRepository {
-    public async createCategory(newCategorie: Category): Promise<Categories> {
-        return await prisma.categories.create({
+    public async createCategory(newCategorie: CategoryBody): Promise<Category> {
+        return await prisma.category.create({
             data: newCategorie
         })
     }
-    public async findCategoryById(id: number): Promise<Categories | null> {
-        return await prisma.categories.findUnique({
+    public async findCategoryById(id: number): Promise<Category | null> {
+        return await prisma.category.findUnique({
             where: {
                 id: id
             }
         })
     }
-    public async findAllCategories(ownerEmail: string): Promise<Categories[]> {
-        return await prisma.categories.findMany({
+    public async findAllCategories(ownerEmail: string): Promise<Category[]> {
+        return await prisma.category.findMany({
             where: {
                 ownerEmail: ownerEmail
             }
         })
     }
-    public async updateCategory({ id, name }: { id: number, name: string }): Promise<Categories> {
-        return await prisma.categories.update({
+    public async updateCategory({ id, name }: { id: number, name: string }): Promise<Category> {
+        return await prisma.category.update({
             where: { id: id },
             data: {
                 name: name
             }
         })
     }
-    public async deleteCateogyr({ id, ownerEmail }: { id: number, ownerEmail: string }): Promise<Categories> {
-        return await prisma.categories.delete({
+    public async deleteCategory({ id, ownerEmail }: { id: number, ownerEmail: string }): Promise<Category> {
+        
+        await prisma.task.updateMany({
+            where: {categoryId: id},
+            data:{
+                categoryId: null
+            }
+        })
+        
+        return await prisma.category.delete({
             where: { id: id, ownerEmail: ownerEmail }
         })
     }

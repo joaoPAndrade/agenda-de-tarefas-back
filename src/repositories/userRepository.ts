@@ -42,6 +42,17 @@ class UserRepository {
         }
       })
 
+      await prisma.task.deleteMany({
+        where: {
+          ownerEmail: user.email
+        }
+      })
+      await prisma.category.deleteMany({
+        where: {
+          ownerEmail: user.email
+        }
+      })
+
 
 
       return await prisma.user.delete({
@@ -52,6 +63,31 @@ class UserRepository {
     }
   }
 
+
+    public async findUsersNotInGroup(groupId: number, name: string){
+      return await prisma.user.findMany({
+          where: {
+              name: {
+                  contains: name,
+                  mode: 'insensitive',
+              },
+              participants: {
+                  none: {
+                      groupId: groupId,
+                  },
+              },
+          },
+          select: {
+              id: true,
+              name: true,
+              email: true,
+          },
+          take: 5, // Limita para evitar sobrecarga
+          orderBy: {
+              name: 'asc',
+          },
+      });
+    }
 
   public async findAllUsers() {
 
@@ -89,6 +125,8 @@ class UserRepository {
         name: 'asc',
       },
     });
+
+    
   }
 }
 

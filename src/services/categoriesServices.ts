@@ -3,11 +3,11 @@ import categoriesRepository from "../repositories/categoriesRepository";
 import { categorySchema, categorySchema_ } from "../validation/categoryValidationSchema";
 import userService from "./userService";
 
-type Category = {
+type CategoryBody = {
     name: string;
     ownerEmail: string;
 }
-type CategoryBody = {
+type Category = {
     id: number;
     name: string;
     ownerEmail: string;
@@ -15,7 +15,7 @@ type CategoryBody = {
 
 class CategoriesServices {
 
-    public async createCategory(category: Category): Promise<{ category?: CategoryBody, error?: string }> {
+    public async createCategory(category: CategoryBody): Promise<{ category?: Category, error?: string }> {
         const user = await userService.getUserByEmail(category.ownerEmail);
         if (user.error) {
             return { error: "User not found" };
@@ -48,6 +48,9 @@ class CategoriesServices {
             return { error: "User not found" };
         }
         const response = await categoriesRepository.findAllCategories(ownerEmail)
+        if (!response || response.length === 0) {
+            return { category: [] };
+        }
 
         return { category: response }
     }
@@ -80,7 +83,7 @@ class CategoriesServices {
             return { error: "Category not found or you are not the owner" };
         }
 
-        const response = await categoriesRepository.deleteCateogyr({ id, ownerEmail })
+        const response = await categoriesRepository.deleteCategory({ id, ownerEmail })
         return { category: response }
     }
 }

@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import categoriesServices from '../services/categoriesServices';
-import { Categories } from '@prisma/client';
-import { error } from 'console';
 
 type categoryBase = {
     name: string;
@@ -43,20 +41,18 @@ class CategoriesController {
 
     public async deleteCategory(req: Request, res: Response): Promise<any> {
         const { id } = req.params
-        const id_ = parseInt(id)
+        const intId = parseInt(id)
         const { ownerEmail } = req.body
 
-        if (isNaN(id_) || !ownerEmail) {
+        if (isNaN(intId) || !ownerEmail) {
             return res.status(400).json({ error: "Invalid category ID or missing owner email" });
         }
 
-        const response = await categoriesServices.deleteCategory({ id: id_, ownerEmail })
+        const response = await categoriesServices.deleteCategory({ id: intId, ownerEmail })
         if (response.error) {
-        console.log("aqui1")
 
             return res.status(404).json({ error: response.error })
         }
-        console.log("aqui2")
         res.status(204).send();
     }
 
@@ -80,7 +76,8 @@ class CategoriesController {
     }
 
     public async getAllCategory(req: Request, res: Response): Promise<any> {
-        const { ownerEmail } = req.query;
+        const { ownerEmail } = req.body;
+
 
         if (!ownerEmail || Array.isArray(ownerEmail) || typeof ownerEmail !== 'string') {
             return res.status(400).json({ error: "Owner email is required and must be a string" });
