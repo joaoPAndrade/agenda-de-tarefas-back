@@ -78,7 +78,8 @@ class TaskRepository {
 
     }
 
-    public async timeSpentOnActivity(initialDate: Date, finalDate: Date, categoryId: number): Promise<Task[]>{
+    public async timeSpentOnActivity(initialDate: Date, finalDate: Date, categoryId: number, userEmail: string): Promise<Task[]>{
+
 
         const tasks = await prisma.task.findMany({
             where: {
@@ -89,7 +90,39 @@ class TaskRepository {
             }
         })
 
-        return tasks
+        console.log("All tasks" + tasks[0])
+
+        const category = await prisma.category.findUnique({
+            where: {
+                id: categoryId
+            }
+        })
+
+        console.log(category)
+
+        
+        const filteredTasks = [];
+        if(userEmail != category?.ownerEmail){
+            for(const task of tasks){
+                if(task.groupId){
+                    const userInGroup = await prisma.participants.findFirst({
+                        where: {
+                            groupId: task.groupId,
+                            userEmail: userEmail
+                        }
+                    })
+
+                    if(userInGroup){
+                        filteredTasks.push(task);
+                    }
+                }
+
+            }
+        } else {
+            return tasks;
+        }
+
+        return filteredTasks
     }
 
     public async getTaskByMonth(month: number){

@@ -138,7 +138,7 @@ class TaskService {
 
     }
 
-    public async timeSpentOnActivity(initialDate: Date, finalDate: Date, categoryId: number): Promise<{error?: string, hours?: number}> {
+    public async timeSpentOnActivity(initialDate: Date, finalDate: Date, categoryId: number, userEmail: string): Promise<{error?: string, minutes?: number}> {
 
         const category = await categoriesServices.getCategory(categoryId);
 
@@ -146,17 +146,26 @@ class TaskService {
             return {error: category.error}
         }
 
-        const tasks = await taskRepository.timeSpentOnActivity(initialDate, finalDate, categoryId);
+        const user = await userService.getUserByEmail(userEmail);
+
+        if(user.error){
+            return { error: user.error};
+        }
+
+        const tasks = await taskRepository.timeSpentOnActivity(initialDate, finalDate, categoryId, userEmail);
+
+        console.log(tasks);
 
         const totalMilliseconds = tasks.reduce((sum, task) => {
             const dateConclusion = task.dateConclusion ? new Date(task.dateConclusion).getTime() : 0;
             const dateCreation = new Date(task.dateCreation).getTime();
-            return sum + (dateConclusion - dateCreation);
+            sum += (dateConclusion - dateCreation);
+            return sum
         }, 0);
 
-        const totalHours = totalMilliseconds / (1000 * 60 * 60);
+        const totalMinutes = totalMilliseconds / (1000 * 60);
 
-        return { hours : totalHours};
+        return { minutes : totalMinutes};
 
     }
 

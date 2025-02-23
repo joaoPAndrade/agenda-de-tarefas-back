@@ -127,9 +127,9 @@ class TaskController {
 
     public async timeSpentOnActivity(req: Request, res: Response): Promise<void>{
 
-        const { initialDate, finalDate, categoryId} = req.body;
+        const { initialDate, finalDate, categoryId, userEmail} = req.body;
 
-        const result = await taskService.timeSpentOnActivity(initialDate, finalDate, categoryId)
+        const result = await taskService.timeSpentOnActivity(initialDate, finalDate, categoryId, userEmail)
 
 
         if(result.error){
