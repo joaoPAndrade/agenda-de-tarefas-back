@@ -97,7 +97,6 @@ class TaskController {
 
         const intId = parseInt(id);
 
-
         const result = await taskService.concludeTask(intId);
 
         if(result.error){
@@ -169,6 +168,23 @@ class TaskController {
         } else {
             res.status(200).send({message: "Category added successfully!"})
         }
+
+    }
+
+    public async initTask(req: Request, res: Response): Promise<void>{
+
+        const { id } = req.params;
+
+        const intTaskId = parseInt(id);
+
+        const result = await taskService.initTask(intTaskId);
+
+        if(result.error){
+            res.status(404).send({ error: result.error})
+        } else {
+            res.status(200).send({message: "Task initiated successfully!"})
+        }
+
 
     }
     

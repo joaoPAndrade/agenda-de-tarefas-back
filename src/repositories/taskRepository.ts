@@ -50,9 +50,9 @@ class TaskRepository {
         })
     }
 
-    public async concludeTask(id: number){
+    public async concludeTask(id: number): Promise<{error?: string}>{
 
-        return await prisma.task.update({
+        await prisma.task.update({
             where:{
                 id,
             },
@@ -60,13 +60,20 @@ class TaskRepository {
                 dateConclusion: new Date(),
                 status: Status.COMPLETED
             }
-        })
+        });
+        return {};
 
     }
 
-    public async unconcludeTask(id: number){
+    public async unconcludeTask(id: number): Promise<{error?: string}>{
 
-        return await prisma.task.update({
+        const task = await this.findTaskById(id);
+
+        if(task?.status != "COMPLETED"){
+            return {error: "You must complete this task!"}
+        }
+
+        await prisma.task.update({
             where:{
                 id,
             },
@@ -75,6 +82,8 @@ class TaskRepository {
                 status: Status.ONGOING
             }
         })
+
+        return {}
 
     }
 
@@ -98,9 +107,6 @@ class TaskRepository {
             }
         })
 
-        console.log(category)
-
-        
         const filteredTasks = [];
         if(userEmail != category?.ownerEmail){
             for(const task of tasks){
@@ -152,6 +158,28 @@ class TaskRepository {
                 categoryId: categoryId
             }
         })
+    }
+
+    public async initTask(id: number): Promise<{error?: string}>{
+
+        const task = await this.findTaskById(id);
+
+        if(task?.status == "TODO"){
+            
+            await prisma.task.update({
+                where: {
+                    id: id,
+                },
+                data: {
+                    status: Status.ONGOING
+                }
+            })
+
+            return {}
+
+        } else {
+            return {error: "Task status must be TODO"}
+        }
     }
     
 }

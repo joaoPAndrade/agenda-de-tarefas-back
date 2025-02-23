@@ -22,6 +22,11 @@ class TaskService {
     }
 
     public async getTaskById(id: number): Promise<TaskResponse> {
+
+        if (isNaN(id)) {
+            return { error: "TaskId must be a number!" };
+        }
+
         const task = await taskRepository.findTaskById(id);
         if (!task) {
             return { error: `Tarefa with id ${id} not found!` };
@@ -66,6 +71,11 @@ class TaskService {
     }
 
     public async updateTask(id: number, data: Partial<Task>): Promise<TaskResponse> {
+
+        if (isNaN(id)) {
+            return { error: "TaskId must be a number!" };
+        }
+
         const { error } = partialTaskSchema.validate(data);
         if (error) {
             return { error: `Validation error: ${error.details[0].message}` };
@@ -81,6 +91,11 @@ class TaskService {
     }
 
     public async deleteTask(id: number): Promise<TaskResponse> {
+
+        if (isNaN(id)) {
+            return { error: "TaskId must be a number!" };
+        }
+
         const task = await taskRepository.findTaskById(id);
         if (!task) {
             return { error: `Tarefa with id ${id} not found!` };
@@ -91,6 +106,9 @@ class TaskService {
     }
 
     public async getTasksByCategory(categoria: string): Promise<TaskResponse> {
+
+
+
         const tasks = await taskRepository.findTasksByCategories(categoria);
         if (!tasks || tasks.length === 0) {
             return { error: `No tarefas found for categoryId ${categoria}` };
@@ -104,6 +122,10 @@ class TaskService {
         }
 
         const task = await this.getTaskById(id);
+
+        if(task.task?.status == 'TODO'){
+            return {error: "You must initiate this task first!"}
+        }
 
         if(task.error){
             return {error: "Task not found!"};
@@ -140,6 +162,10 @@ class TaskService {
 
     public async timeSpentOnActivity(initialDate: Date, finalDate: Date, categoryId: number, userEmail: string): Promise<{error?: string, minutes?: number}> {
 
+        if (isNaN(categoryId)) {
+            return { error: "CategoryId must be a number!" };
+        }
+
         const category = await categoriesServices.getCategory(categoryId);
 
         if(category.error){
@@ -158,7 +184,7 @@ class TaskService {
 
         const totalMilliseconds = tasks.reduce((sum, task) => {
             const dateConclusion = task.dateConclusion ? new Date(task.dateConclusion).getTime() : 0;
-            const dateCreation = new Date(task.dateCreation).getTime();
+            const dateCreation = new Date(task.dateTask).getTime();
             sum += (dateConclusion - dateCreation);
             return sum
         }, 0);
@@ -201,6 +227,25 @@ class TaskService {
         const result = taskRepository.addCategoryToTask(taskId, categoryId);
 
         return {}
+
+    }
+
+    public async initTask(taskId: number): Promise<{error?: string}>{
+
+        if(isNaN(taskId)){
+            return {error: "TaskId must be a number!"}
+        }
+
+        const task = await this.getTaskById(taskId);
+
+        if(task.error){
+            return {error: task.error};
+        }
+
+        const res = await taskRepository.initTask(taskId);
+
+        return {}
+
 
     }
 }
