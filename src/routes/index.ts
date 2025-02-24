@@ -62,12 +62,12 @@ class Routes {
         router.delete('/user/:id', userController.deleteUser);
         
         router.get('/group', groupController.getGroup);
+        router.get('/group/owned/:email', groupController.getGroupsOwnedByUser);
         router.get('/group/:id', groupController.getGroupById);
         router.get('/group/user', groupController.getGroupByUser); // Grupos que é dono + grupos que participa
         router.post('/group', groupController.createGroup);
         router.put('/group/:id', groupController.updateGroup);
         router.delete('/group/:id', groupController.deleteGroup);
-        router.get('/group/owned/:email', groupController.getGroupsOwnedByUser);
 
         router.post('/group/participants/:id', groupController.addParticipantToGroup);
         router.get('/group/participants/:id', groupController.getParticipantsByGroup);
@@ -77,8 +77,8 @@ class Routes {
         
         router.post('/category', categoriesController.createCategory)
         router.put('/category/:id', categoriesController.updateCategory)
-        router.delete('/category/:id', categoriesController.deleteCategory)
         router.get('/category/email', categoriesController.getAllCategory) // Get de todas as categorias por email. Deve-se mandar o email no body da requisição
+        router.delete('/category/:id', categoriesController.deleteCategory)
         router.get('/category/group', categoriesController.getGroupCategories)
         router.get('/category/:id', categoriesController.getCategory)
 

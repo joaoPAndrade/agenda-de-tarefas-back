@@ -38,6 +38,12 @@ class TaskService {
 
     public async createTask(newTarefa: Omit<Task, 'id'>, ownerEmail: string): Promise<TaskResponse> {
         const taskData = { ...newTarefa, ownerEmail };
+        const dateTask = new Date(taskData.dateTask);
+        
+        const adjustedDate = new Date(dateTask.getTime() - (3 * 60 * 60 * 1000)); 
+        taskData.dateTask = adjustedDate;
+
+
         const { error } = taskSchema.validate(taskData);
         if (error) {
             return { error: `Validation error: ${error.details[0].message}` };
@@ -73,22 +79,28 @@ class TaskService {
     }
 
     public async updateTask(id: number, data: Partial<Task>): Promise<TaskResponse> {
+        console.log("Atualizando")
+        
 
         if (isNaN(id)) {
             return { error: "TaskId must be a number!" };
         }
-
+        console.log(data)
         const { error } = partialTaskSchema.validate(data);
-        if (error) {
-            return { error: `Validation error: ${error.details[0].message}` };
-        }
+        // if (error) {
+        //     console.log(`Validation error: ${error.details[0].message}`)
+        //     return { error: `Validation error: ${error.details[0].message}` };
+        // }
 
         const task = await taskRepository.findTaskById(id);
         if (!task) {
+            console.log("Erro 2")
+
             return { error: `Tarefa with id ${id} not found!` };
         }
 
         const updatedTask = await taskRepository.updateTask(id, data);
+        console.log(updatedTask)
         return { task: updatedTask };
     }
 
@@ -125,9 +137,9 @@ class TaskService {
 
         const task = await this.getTaskById(id);
 
-        if(task.task?.status == 'TODO'){
+        /*if(task.task?.status == 'TODO'){
             return {error: "You must initiate this task first!"}
-        }
+        }*/
 
         if(task.error){
             return {error: "Task not found!"};
@@ -182,8 +194,7 @@ class TaskService {
 
         const tasks = await taskRepository.timeSpentOnActivity(initialDate, finalDate, categoryId, userEmail);
 
-        console.log(tasks);
-
+        
         const totalMilliseconds = tasks.reduce((sum, task) => {
             const dateConclusion = task.dateConclusion ? new Date(task.dateConclusion).getTime() : 0;
             const dateCreation = new Date(task.dateTask).getTime();
@@ -192,7 +203,7 @@ class TaskService {
         }, 0);
 
         const totalMinutes = totalMilliseconds / (1000 * 60);
-
+        console.log("totalMinutes: " + totalMinutes);
         return { minutes : totalMinutes};
 
     }
@@ -294,12 +305,14 @@ class TaskService {
         return {}
     }
 
-    public async getTaskByDay(date: Date): Promise<TaskResponse>{
-        const tasks = await taskRepository.getTaskByDay(date);
+    public async getTaskByDay(date: Date, email: string): Promise<TaskResponse>{
+        const tasks = await taskRepository.getTaskByDay(date, email);
 
-        if (!tasks || tasks.length === 0) {
+        if (!tasks ) {
+            console.log("No tasks found")
             return { error: "No tasks found" };
         }
+        
         
     // Adiciona informações do grupo e da categoria para cada task
     const tasksWithDetails = await Promise.all(tasks.map(async (task) => {
