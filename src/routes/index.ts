@@ -67,6 +67,7 @@ class Routes {
         router.post('/group', groupController.createGroup);
         router.put('/group/:id', groupController.updateGroup);
         router.delete('/group/:id', groupController.deleteGroup);
+        router.get('/group/owned/:email', groupController.getGroupsOwnedByUser);
 
         router.post('/group/participants/:id', groupController.addParticipantToGroup);
         router.get('/group/participants/:id', groupController.getParticipantsByGroup);

@@ -128,6 +128,16 @@ class GroupRepository {
             return allGroupIds;
         }
 
+        public async getGroupsOwnedByUser(email: string): Promise<Group[]> {
+            const groups = await prisma.group.findMany({
+                where: {
+                    ownerEmail: email
+                },
+            });
+        
+            return groups;
+        }
+
 
 }
 
