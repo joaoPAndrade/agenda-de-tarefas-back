@@ -226,6 +226,8 @@ class TaskController {
         const isoDate = new Date(date);
 
         const result = await taskService.getTaskByDay(isoDate);
+
+        console.log(result)
         
 
         if(result.error){

@@ -5,11 +5,13 @@ import userController from '../controllers/userController';
 import userService from './userService';
 import groupService from './groupService';
 import categoriesServices from './categoriesServices';
+import groupRepository from '../repositories/groupRepository';
 
 interface TaskResponse {
     error?: string;
     task?: Task;
     tasks?: Task[];
+    tasksWithDetails?: any[];
 }
 
 class TaskService {
@@ -295,11 +297,23 @@ class TaskService {
     public async getTaskByDay(date: Date): Promise<TaskResponse>{
         const tasks = await taskRepository.getTaskByDay(date);
 
-        if (!tasks) {
+        if (!tasks || tasks.length === 0) {
             return { error: "No tasks found" };
         }
         
-        return {tasks};
+    // Adiciona informações do grupo e da categoria para cada task
+    const tasksWithDetails = await Promise.all(tasks.map(async (task) => {
+        const group = task.groupId !== null ? await groupService.getGroupById(task.groupId) : { error: "Group ID is null" };
+        const category = task.categoryId !== null ? await categoriesServices.getCategoryById(task.categoryId) : { error: "Category ID is null" };
+
+        return {
+            ...task,
+            groupName: group.group?.name,
+            categoryName: category.category?.name,
+        };
+    }));
+
+        return {tasksWithDetails};
     }
 }
 

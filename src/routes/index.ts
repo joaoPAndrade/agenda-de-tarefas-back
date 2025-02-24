@@ -82,7 +82,7 @@ class Routes {
         router.get('/category/:id', categoriesController.getCategory)
 
         router.put("/task/month/:month", taskController.getTaskByMonth);
-        router.get("/task/day", taskController.getTaskByDay); 
+        router.put("/task/day", taskController.getTaskByDay); 
         router.get('/task/:id', taskController.getTaskById);
         router.put('/task/time', taskController.timeSpentOnActivity);
         router.get('/task', taskController.getTasks);
