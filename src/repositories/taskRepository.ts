@@ -205,6 +205,16 @@ class TaskRepository {
         });
         return {};
     }
+
+    public async getTaskByDay(day: Date): Promise<Task[]>{
+        const tasks = await prisma.task.findMany({
+            where: {
+                dateTask: day
+            }
+        });
+
+        return tasks;
+    }
     
 }
 

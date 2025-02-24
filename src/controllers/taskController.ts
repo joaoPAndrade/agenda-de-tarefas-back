@@ -218,6 +218,23 @@ class TaskController {
             res.status(200).send({message: "Task added to group successfully!"})
         }
     }
+
+    public async getTaskByDay(req: Request, res: Response): Promise<void>{
+
+        const { date } = req.body;
+
+        const isoDate = new Date(date);
+
+        const result = await taskService.getTaskByDay(isoDate);
+        
+
+        if(result.error){
+            res.status(404).send({ error: result.error})
+        } else {
+            res.status(200).send(result)
+        }
+
+    }
     
 }
 

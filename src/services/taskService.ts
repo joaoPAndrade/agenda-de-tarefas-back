@@ -291,6 +291,16 @@ class TaskService {
 
         return {}
     }
+
+    public async getTaskByDay(date: Date): Promise<TaskResponse>{
+        const tasks = await taskRepository.getTaskByDay(date);
+
+        if (!tasks) {
+            return { error: "No tasks found" };
+        }
+        
+        return {tasks};
+    }
 }
 
 export default new TaskService();
