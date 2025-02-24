@@ -79,28 +79,22 @@ class TaskService {
     }
 
     public async updateTask(id: number, data: Partial<Task>): Promise<TaskResponse> {
-        console.log("Atualizando")
         
 
         if (isNaN(id)) {
             return { error: "TaskId must be a number!" };
         }
-        console.log(data)
         const { error } = partialTaskSchema.validate(data);
         // if (error) {
-        //     console.log(`Validation error: ${error.details[0].message}`)
         //     return { error: `Validation error: ${error.details[0].message}` };
         // }
 
         const task = await taskRepository.findTaskById(id);
         if (!task) {
-            console.log("Erro 2")
-
             return { error: `Tarefa with id ${id} not found!` };
         }
 
         const updatedTask = await taskRepository.updateTask(id, data);
-        console.log(updatedTask)
         return { task: updatedTask };
     }
 
@@ -203,7 +197,6 @@ class TaskService {
         }, 0);
 
         const totalMinutes = totalMilliseconds / (1000 * 60);
-        console.log("totalMinutes: " + totalMinutes);
         return { minutes : totalMinutes};
 
     }
@@ -309,7 +302,6 @@ class TaskService {
         const tasks = await taskRepository.getTaskByDay(date, email);
 
         if (!tasks ) {
-            console.log("No tasks found")
             return { error: "No tasks found" };
         }
         
