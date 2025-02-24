@@ -181,6 +181,30 @@ class TaskRepository {
             return {error: "Task status must be TODO"}
         }
     }
+
+    public async getTasksByGroup(groupId: number): Promise<Task[]>{
+        const temp = await prisma.task.findMany({
+            where: {
+                groupId: groupId
+            }
+        })
+
+        
+
+        return temp;
+    }
+
+    public async addTaskToGroup(taskId: number, groupId: number): Promise<{error?: string}>{
+        await prisma.task.update({
+            where: {
+                id: taskId
+            },
+            data: {
+                groupId: groupId
+            }
+        });
+        return {};
+    }
     
 }
 

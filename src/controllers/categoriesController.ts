@@ -91,6 +91,22 @@ class CategoriesController {
         }
         res.status(200).json({ category: response.category })
     }
+
+    public async getGroupCategories(req: Request, res: Response): Promise<any> {
+        const { ownerEmail } = req.query;
+
+        if (!ownerEmail || Array.isArray(ownerEmail) || typeof ownerEmail !== 'string') {
+            return res.status(400).json({ error: "Owner email is required and must be a string" });
+        }
+
+        const response = await categoriesServices.getGroupCategories(ownerEmail);
+
+        if (response.error) {
+            return res.status(404).json({ error: response.error })
+        } else {
+            res.status(200).json({ categories: response.categories })
+        }
+    }
 }
 
 export default new CategoriesController();

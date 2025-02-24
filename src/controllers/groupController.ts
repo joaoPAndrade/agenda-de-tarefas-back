@@ -135,6 +135,25 @@ class GroupController {
         }
 
     }
+
+    public async getGroupByUser(req: Request, res: Response): Promise<void> {
+
+        const { email } = req.query;
+
+        if (typeof email !== 'string') {
+            res.status(400).send({ error: 'Invalid email' });
+            return;
+        }
+
+        const result = await groupService.getGroupByUser(email);
+        
+        if (result.error) {
+            res.status(400).send({ error: result.error });
+        } else {
+            res.status(200).send(result.groups);
+        }
+
+    }
 }
 
 export default new GroupController();

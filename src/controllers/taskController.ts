@@ -187,6 +187,37 @@ class TaskController {
 
 
     }
+
+    public async getTaskByGroup(req: Request, res: Response): Promise<void>{
+
+        const { groupId } = req.params;
+
+        const intGroupId = parseInt(groupId);
+
+        const result = await taskService.getTasksByGroup(intGroupId);
+
+        if(result.error){
+            res.status(404).send({ error: result.error})
+        } else {
+            res.status(200).send(result)
+        }
+
+    }
+
+    public async addTaskToGroup(req: Request, res: Response): Promise<void>{
+        const { id } = req.params;
+        const { groupId } = req.body;
+        
+        const intTaskId = parseInt(id);
+        
+        const result = await taskService.addTaskToGroup(intTaskId, groupId);
+
+        if(result.error){
+            res.status(404).send({ error: result.error})
+        } else {
+            res.status(200).send({message: "Task added to group successfully!"})
+        }
+    }
     
 }
 

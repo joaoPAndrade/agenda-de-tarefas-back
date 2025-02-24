@@ -248,6 +248,49 @@ class TaskService {
 
 
     }
+    
+
+    public async getTasksByGroup(groupId: number): Promise<TaskResponse>{
+        if(isNaN(groupId)){
+            return {error: "GroupId must be a number!"};
+        }
+        const group = await groupService.getGroupById(groupId);
+
+        if(group.error){
+            return {error: group.error};
+        }
+
+        const tasks = await taskRepository.getTasksByGroup(groupId);
+
+        if (!tasks) {
+            return { error: "No tasks found" };
+        }
+        
+        return {tasks};
+    }
+
+    public async addTaskToGroup(taskId: number, groupId: number): Promise<{error?: string}>{
+
+        if(isNaN(taskId) || isNaN(groupId)){
+            return {error: "TaskId and GroupId must be numbers!"};
+        }
+
+        const task = await this.getTaskById(taskId);
+
+        if(task.error){
+            return {error: task.error};
+        }
+
+        const group = await groupService.getGroupById(groupId);
+
+        if(group.error){
+            return {error: group.error};
+        }
+
+        const result = taskRepository.addTaskToGroup(taskId, groupId);
+
+        return {}
+    }
 }
 
 export default new TaskService();
