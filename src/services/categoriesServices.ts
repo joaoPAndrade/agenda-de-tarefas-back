@@ -31,7 +31,7 @@ class CategoriesServices {
         return { category: newCategory };
     }
 
-    public async getCategory(id: number): Promise<{ category?: CategoryBody, error?: string }> {
+    public async getCategory(id: number): Promise<{ category?: Category, error?: string }> {
         if (isNaN(id) || id <= 0) {
             return { error: "Invalid category ID" };
         }
@@ -90,7 +90,15 @@ class CategoriesServices {
         return { category: response }
     }
 
-    public async getGroupCategories(ownerEmail: string): Promise<{ categories?: number[], error?: string }> {
+    public async getCategoryById(id: number): Promise<{ category?: Category, error?: string }> {
+        const category = await categoriesRepository.findCategoryById(id);
+        if (!category) {
+            return { error: `Category with id ${id} not found!` };
+        }
+        return { category };
+    }
+
+    public async getGroupCategories(ownerEmail: string): Promise<{ categories?: Category[], error?: string }> {
         if (ownerEmail.length === 0) {
             return { error: "Owner email is required" };
         }
@@ -129,9 +137,11 @@ class CategoriesServices {
         // Remove duplicated category IDs
         const uniqueCategories = Array.from(new Set(categories));
 
+        const fetchedCategories = await Promise.all(uniqueCategories.filter((categoryId): categoryId is number => categoryId !== null).map(categoryId => this.getCategoryById(categoryId)));
 
-        return { categories: uniqueCategories.filter((category): category is number => category !== null) }
+        const validCategories = fetchedCategories.filter(category => category.category !== undefined).map(category => (category.category as Category));
 
+        return { categories: validCategories };
     }
 }
 
