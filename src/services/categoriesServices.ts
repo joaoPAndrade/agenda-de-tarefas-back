@@ -54,6 +54,13 @@ class CategoriesServices {
         if (!response || response.length === 0) {
             return { category: [] };
         }
+        const defaultCategory: Category = { id: 0, ownerEmail: ownerEmail , name: "Sem Categoria" };
+
+    // Garante que a categoria padrão esteja sempre presente na lista e na primeira posição
+    const categoryList = response && response.length > 0 ? response : [];
+    if (!categoryList.some(category => category.id === 0)) {
+        categoryList.unshift(defaultCategory);
+    }
 
         return { category: response }
     }
@@ -132,7 +139,8 @@ class CategoriesServices {
                 categories.push(t.categoryId)
             }
         }
-
+        const response = await categoriesRepository.findAllCategories(ownerEmail)
+        
 
         // Remove duplicated category IDs
         const uniqueCategories = Array.from(new Set(categories));
@@ -140,8 +148,12 @@ class CategoriesServices {
         const fetchedCategories = await Promise.all(uniqueCategories.filter((categoryId): categoryId is number => categoryId !== null).map(categoryId => this.getCategoryById(categoryId)));
 
         const validCategories = fetchedCategories.filter(category => category.category !== undefined).map(category => (category.category as Category));
-
-        return { categories: validCategories };
+        const all_categories = response.concat(validCategories)
+        const uniqueCategoriesList = all_categories.filter((category, index, self) =>
+            index === self.findIndex((c) => c.id === category.id) // Verifica se a categoria com o mesmo id já apareceu
+          );
+          console.log(uniqueCategoriesList)
+        return { categories: uniqueCategoriesList };
     }
 }
 

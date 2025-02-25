@@ -34,6 +34,7 @@ class TaskController {
         const result = await taskService.createTask(taskData, ownerEmail);
 
         if (result.error) {
+            console.log(result.error )
             res.status(400).send({ error: result.error });
         } else {
             res.status(201).send({ tarefa: result.task });
@@ -229,7 +230,7 @@ class TaskController {
         const isoDate = new Date(date);
         const result = await taskService.getTaskByDay(isoDate, email);
 
-
+        console.log("Retornaram as tarefas" + result.tasksWithDetails?.length)
         if(result.error){
             res.status(404).send({ error: result.error})
         } else {

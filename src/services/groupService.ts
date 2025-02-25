@@ -176,7 +176,19 @@ class GroupService {
 
         const result = await groupRepository.getGroupsOwnedByUser(email);
 
-        return { groups: result }
+        const defaultGroup ={ 
+            id: 0, 
+            ownerEmail: email, 
+            name: "Sem Grupo", 
+            description: "Sem descrição"
+        };
+    // Garante que a lista contenha sempre o grupo padrão e na primeira posição
+    const groupsList = result && result.length > 0 ? result : [];
+    if (!groupsList.some(group => group.id === 0)) {
+        groupsList.unshift(defaultGroup);
+    }
+
+    return { groups: groupsList };
     }
 
 }

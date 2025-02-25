@@ -11,8 +11,8 @@ type Category = {
     ownerEmail: string;
 }
 class CategoriesController {
-
     public async createCategory(req: Request, res: Response): Promise<any> {
+        console.log("Criando categoria")
         const data: categoryBase = req.body
 
         const newCategory = await categoriesServices.createCategory(data)

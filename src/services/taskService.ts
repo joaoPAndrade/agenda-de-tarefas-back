@@ -46,6 +46,7 @@ class TaskService {
 
         const { error } = taskSchema.validate(taskData);
         if (error) {
+            console.log(`Validation error: ${error.details[0].message}` )
             return { error: `Validation error: ${error.details[0].message}` };
         }
 
@@ -55,25 +56,27 @@ class TaskService {
             return {error: "User/Owner not found!"};
         }
 
-        if (taskData.groupId === null) {
+      /*  if (taskData.groupId === null) {
             return { error: "Group ID cannot be null" };
-        }
-
+        }*/
+        if(taskData.groupId !== null){
         const group = await groupService.getGroupById(taskData.groupId);
 
         if(group.error){
             return {error: "Group not found!"};
         }
-
+    }
+/*
         if (taskData.categoryId === null) {
             return { error: "Category ID cannot be null" };
-        }
+        }*/
+       if(taskData.categoryId !== null){
         const category = await categoriesServices.getCategory(taskData.categoryId);
 
         if(category.error){
             return {error: "Category not found!"}
         }
-
+    }
         const createdTask = await taskRepository.createTask(taskData);
         return { task: createdTask };
     }
@@ -199,6 +202,9 @@ class TaskService {
             const dateConclusion = task.dateConclusion ? new Date(task.dateConclusion).getTime() : 0;
             const dateCreation = new Date(task.dateTask).getTime();
             sum += (dateConclusion - dateCreation);
+            if(sum<0)
+                sum = 0;
+
             return sum
         }, 0);
 
@@ -325,7 +331,7 @@ class TaskService {
             categoryName: category.category?.name,
         };
     }));
-
+        console.log("tasksWithDetails" + tasksWithDetails )
         return {tasksWithDetails};
     }
 }
