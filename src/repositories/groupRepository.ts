@@ -94,6 +94,51 @@ class GroupRepository {
             }
         })
     }
+
+        public async getGroupByUser(email: string): Promise<number[]> {
+            // Grupos que o usuário é dono
+            const ownedGroups = await prisma.group.findMany({
+                where: {
+                    ownerEmail: email
+                },
+                select: {
+                    id: true // Seleciona apenas o ID do grupo
+                }
+            });
+        
+            // Grupos que o usuário é participante
+            const asParticipantGroups = await prisma.participants.findMany({
+                where: {
+                    userEmail: email
+                },
+                select: {
+                    groupId: true // Seleciona apenas o ID do grupo
+                }
+            });
+        
+            // Extrair os IDs dos grupos dos resultados dos participantes
+            const participantGroupIds = asParticipantGroups.map(participant => participant.groupId);
+        
+            // Extrair os IDs dos grupos dos resultados dos grupos que o usuário é dono
+            const ownedGroupIds = ownedGroups.map(group => group.id);
+        
+            // Combinar os IDs dos grupos que o usuário é dono e os grupos que o usuário participa
+            const allGroupIds = [...new Set([...participantGroupIds, ...ownedGroupIds])];
+        
+            return allGroupIds;
+        }
+
+        public async getGroupsOwnedByUser(email: string): Promise<Group[]> {
+            const groups = await prisma.group.findMany({
+                where: {
+                    ownerEmail: email
+                },
+            });
+        
+            return groups;
+        }
+
+
 }
 
 export default new GroupRepository();

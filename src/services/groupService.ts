@@ -145,6 +145,51 @@ class GroupService {
         return { message: "Participant removed successfully", count };
 
     }
+    public async getGroupByUser(email: string): Promise<{error?: string, groups?: number[]}>{
+
+        if (!email || Array.isArray(email) || typeof email !== 'string') {
+            return { error: "Email is required and must be a string" }
+        }
+
+        const user = await userService.getUserByEmail(email);
+
+        if(user.error){
+            return { error: user.error}
+        }
+
+        const result = await groupRepository.getGroupByUser(email);
+
+        return { groups: result }
+
+    }
+
+    public async getGroupsOwnedByUser(email: string): Promise<{ error?: string, groups?: Group[] }> {
+        if (!email || Array.isArray(email) || typeof email !== 'string') {
+            return { error: "Email is required and must be a string" }
+        }
+
+        const user = await userService.getUserByEmail(email);
+
+        if (user.error) {
+            return { error: user.error }
+        }
+
+        const result = await groupRepository.getGroupsOwnedByUser(email);
+
+        const defaultGroup ={ 
+            id: 0, 
+            ownerEmail: email, 
+            name: "Sem Grupo", 
+            description: "Sem descrição"
+        };
+    // Garante que a lista contenha sempre o grupo padrão e na primeira posição
+    const groupsList = result && result.length > 0 ? result : [];
+    if (!groupsList.some(group => group.id === 0)) {
+        groupsList.unshift(defaultGroup);
+    }
+
+    return { groups: groupsList };
+    }
 
 }
 

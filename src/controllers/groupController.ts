@@ -4,7 +4,7 @@ import groupService from '../services/groupService';
 class GroupController {
 
     public async getGroup (req: Request, res: Response): Promise<void> {
-
+        console.log("2")
         const groups = await groupService.getAllGroups();
         res.status(200).send(groups);
 
@@ -132,6 +132,42 @@ class GroupController {
             res.status(400).send({ error: result.error });
         } else {
             res.status(200).send({ message: 'Participant removed from group' });
+        }
+
+    }
+
+    public async getGroupByUser(req: Request, res: Response): Promise<void> {
+        console.log("3")
+
+        const { email } = req.query;
+
+        if (typeof email !== 'string') {
+            res.status(400).send({ error: 'Invalid email' });
+            return;
+        }
+
+        const result = await groupService.getGroupByUser(email);
+        
+        if (result.error) {
+            res.status(400).send({ error: result.error });
+        } else {
+            res.status(200).send(result.groups);
+        }
+
+    }
+
+    public async getGroupsOwnedByUser(req: Request, res: Response): Promise<void> {
+        console.log("SAdASDASD")
+        const { email } = req.params;
+
+        const result = await groupService.getGroupsOwnedByUser(email);
+        console.log(result.groups?.length);
+        if (result.error) {
+            console.log("SAdASDASD")
+            res.status(400).send({ error: result.error });
+        } else {
+            console.log(result.groups)
+            res.status(200).send(result.groups);
         }
 
     }

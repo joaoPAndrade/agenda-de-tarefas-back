@@ -28,11 +28,13 @@ class TaskController {
     
     public async createTask(req: Request, res: Response): Promise<void> {
         const taskData = req.body;
+        console.log(taskData);
         const ownerEmail = taskData.ownerEmail;
 
         const result = await taskService.createTask(taskData, ownerEmail);
 
         if (result.error) {
+            console.log(result.error )
             res.status(400).send({ error: result.error });
         } else {
             res.status(201).send({ tarefa: result.task });
@@ -57,6 +59,8 @@ class TaskController {
 
     public async deleteTask(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
+        console.log(id)
+        console.log("BATEU")
 
         const intId = parseInt(id)
 
@@ -92,11 +96,10 @@ class TaskController {
     }
 
     public async concludeTask(req: Request, res: Response): Promise<void> {
-
+        console.log("concluindo")
         const { id } = req.params;
 
         const intId = parseInt(id);
-
 
         const result = await taskService.concludeTask(intId);
 
@@ -109,7 +112,7 @@ class TaskController {
     }
 
     public async unconcludeTask(req: Request, res: Response): Promise<void>{
-
+        console.log("unconcluindo")
         const { id } = req.params;
 
         const intId = parseInt(id);
@@ -127,14 +130,16 @@ class TaskController {
 
     public async timeSpentOnActivity(req: Request, res: Response): Promise<void>{
 
-        const { initialDate, finalDate, categoryId} = req.body;
-
-        const result = await taskService.timeSpentOnActivity(initialDate, finalDate, categoryId)
+        const { initialDate, finalDate, categoryId, userEmail} = req.body;
+        console.log("initialDate: " + initialDate)
+        console.log("finalDate: " + finalDate)
+        const result = await taskService.timeSpentOnActivity(initialDate, finalDate, categoryId, userEmail)
 
 
         if(result.error){
             res.status(404).send({ error: result.error})
         } else {
+            console.log("result: " + result)
             res.status(200).send(result)
         }
 
@@ -168,6 +173,68 @@ class TaskController {
             res.status(404).send({ error: result.error})
         } else {
             res.status(200).send({message: "Category added successfully!"})
+        }
+
+    }
+
+    public async initTask(req: Request, res: Response): Promise<void>{
+
+        const { id } = req.params;
+
+        const intTaskId = parseInt(id);
+
+        const result = await taskService.initTask(intTaskId);
+
+        if(result.error){
+            res.status(404).send({ error: result.error})
+        } else {
+            res.status(200).send({message: "Task initiated successfully!"})
+        }
+
+
+    }
+
+    public async getTaskByGroup(req: Request, res: Response): Promise<void>{
+
+        const { groupId } = req.params;
+
+        const intGroupId = parseInt(groupId);
+
+        const result = await taskService.getTasksByGroup(intGroupId);
+
+        if(result.error){
+            res.status(404).send({ error: result.error})
+        } else {
+            res.status(200).send(result)
+        }
+
+    }
+
+    public async addTaskToGroup(req: Request, res: Response): Promise<void>{
+        const { id } = req.params;
+        const { groupId } = req.body;
+        
+        const intTaskId = parseInt(id);
+        
+        const result = await taskService.addTaskToGroup(intTaskId, groupId);
+
+        if(result.error){
+            res.status(404).send({ error: result.error})
+        } else {
+            res.status(200).send({message: "Task added to group successfully!"})
+        }
+    }
+
+    public async getTaskByDay(req: Request, res: Response): Promise<void>{
+        const { date, email } = req.body;
+        const isoDate = new Date(date);
+        const result = await taskService.getTaskByDay(isoDate, email);
+
+        console.log("Retornaram as tarefas" + result.tasksWithDetails?.length)
+        if(result.error){
+            res.status(404).send({ error: result.error})
+        } else {
+            res.status(200).send(result)
         }
 
     }

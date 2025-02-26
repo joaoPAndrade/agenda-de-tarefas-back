@@ -1,6 +1,8 @@
 import { prisma } from '../../prisma/client';
 import { Task } from '@prisma/client';
+import { Group, Participants } from '@prisma/client';
 import { Status } from '@prisma/client';
+
 class TaskRepository {
     public async createTask(newTask: Omit<Task, 'id'>): Promise<Task> {
         return await prisma.task.create({
@@ -9,6 +11,16 @@ class TaskRepository {
     }
 
     public async updateTask(id: number, data: Partial<Task>): Promise<Task> {
+        console.log("hora desatualizada")
+        console.log(data.dateTask)
+        if (data.dateTask) {
+            const dateTask = new Date(data.dateTask);
+
+            const adjustedDate = new Date(dateTask.getTime() - (3 * 60 * 60 * 1000)); // Subtrai 3 horas
+            data.dateTask = adjustedDate;
+        }
+        console.log("hora atualizada")
+        console.log(data.dateTask)
         return await prisma.task.update({
             where: { id },
             data: data,
@@ -37,10 +49,10 @@ class TaskRepository {
             where: { ownerEmail: ownerEmail },
         });
     }
-    
+
     public async findTasksByCategories(categories: string | string[]): Promise<Task[]> {
         const categoriesArray = (Array.isArray(categories) ? categories : [categories]).map(Number);
-    
+
         return await prisma.task.findMany({
             where: {
                 categoryId: {
@@ -50,35 +62,47 @@ class TaskRepository {
         })
     }
 
-    public async concludeTask(id: number){
-
-        return await prisma.task.update({
-            where:{
+    public async concludeTask(id: number): Promise<{ error?: string }> {
+        const localDate = new Date(); 
+        const adjustedDate = new Date(localDate.getTime() - (3 * 60 * 60 * 1000));
+        console.log(adjustedDate)
+        await prisma.task.update({
+            where: {
                 id,
             },
-            data:{
-                dateConclusion: new Date(),
+            data: {
+                dateConclusion: adjustedDate,
                 status: Status.COMPLETED
             }
-        })
+        });
+        return {};
 
     }
 
-    public async unconcludeTask(id: number){
+    public async unconcludeTask(id: number): Promise<{ error?: string }> {
 
-        return await prisma.task.update({
-            where:{
+        const task = await this.findTaskById(id);
+
+        if (task?.status != "COMPLETED") {
+            return { error: "You must complete this task!" }
+        }
+
+        await prisma.task.update({
+            where: {
                 id,
             },
-            data:{
+            data: {
                 dateConclusion: null,
-                status: Status.ONGOING
+                status: Status.TODO
             }
         })
 
+        return {}
+
     }
 
-    public async timeSpentOnActivity(initialDate: Date, finalDate: Date, categoryId: number): Promise<Task[]>{
+    public async timeSpentOnActivity(initialDate: Date, finalDate: Date, categoryId: number, userEmail: string): Promise<Task[]> {
+
 
         const tasks = await prisma.task.findMany({
             where: {
@@ -89,15 +113,44 @@ class TaskRepository {
             }
         })
 
-        return tasks
+        console.log("All tasks" + tasks[0])
+
+        const category = await prisma.category.findUnique({
+            where: {
+                id: categoryId
+            }
+        })
+
+        const filteredTasks = [];
+        if (userEmail != category?.ownerEmail) {
+            for (const task of tasks) {
+                if (task.groupId) {
+                    const userInGroup = await prisma.participants.findFirst({
+                        where: {
+                            groupId: task.groupId,
+                            userEmail: userEmail
+                        }
+                    })
+
+                    if (userInGroup) {
+                        filteredTasks.push(task);
+                    }
+                }
+
+            }
+        } else {
+            return tasks;
+        }
+
+        return filteredTasks
     }
 
-    public async getTaskByMonth(month: number){
+    public async getTaskByMonth(month: number) {
 
         const year = new Date().getFullYear();
         const startDate = new Date(year, month - 1, 1);
         const endDate = new Date(year, month, 1);
-    
+
         const tasks = await prisma.task.findMany({
             where: {
                 dateConclusion: {
@@ -106,11 +159,11 @@ class TaskRepository {
                 }
             }
         });
-    
+
         return tasks;
     }
 
-    public async addCategoryToTask(taskId: number, categoryId: number){
+    public async addCategoryToTask(taskId: number, categoryId: number) {
         return await prisma.task.update({
             where: {
                 id: taskId
@@ -120,7 +173,101 @@ class TaskRepository {
             }
         })
     }
-    
+
+    public async initTask(id: number): Promise<{ error?: string }> {
+
+        const task = await this.findTaskById(id);
+
+        if (task?.status == "TODO") {
+
+            await prisma.task.update({
+                where: {
+                    id: id,
+                },
+                data: {
+                    status: Status.ONGOING
+                }
+            })
+
+            return {}
+
+        } else {
+            return { error: "Task status must be TODO" }
+        }
+    }
+
+    public async getTasksByGroup(groupId: number): Promise<Task[]> {
+        const temp = await prisma.task.findMany({
+            where: {
+                groupId: groupId
+            }
+        })
+
+
+
+        return temp;
+    }
+
+    public async addTaskToGroup(taskId: number, groupId: number): Promise<{ error?: string }> {
+        await prisma.task.update({
+            where: {
+                id: taskId
+            },
+            data: {
+                groupId: groupId
+            }
+        });
+        return {};
+    }
+
+    public async getTaskByDay(day: Date, email: string): Promise<Task[]> {
+        console.log(email)
+        const endOfDay = new Date(day.setHours(23, 59, 59, 999));
+        endOfDay.setUTCHours(23, 59, 59, 999);
+
+        console.log("inicio" + day)
+        console.log("fim " + endOfDay)
+        const tasks = await prisma.task.findMany({
+            where: {
+                dateTask: {
+                    gte: day,
+                    lt: endOfDay
+                },
+                // Usamos OR para combinar as condições
+                OR: [
+                    {
+                        // Tarefas que são suas (proprietário é você)
+                        ownerEmail: email
+                    },
+                    {
+                        // Tarefas que não são suas, mas estão associadas a grupos nos quais você participa
+                        NOT: {
+                            ownerEmail: email  // Tarefas que não pertencem a você
+                        },
+                        groupId: {
+                            // A tarefa deve ter um groupId associado ao grupo no qual o usuário participa
+                            in: await prisma.participants.findMany({
+                                where: {
+                                    userEmail: email
+                                },
+                                select: {
+                                    groupId: true
+                                }
+                            }).then(participants => participants.map(p => p.groupId))
+                        }
+                    }
+                ]
+            },
+            orderBy: {
+                dateTask: 'asc'
+            }
+            
+            
+        });
+        console.log("asdasdasdasd " + tasks.length)
+        return tasks;
+    }
+
 }
 
 export default new TaskRepository();

@@ -48,6 +48,9 @@ class CategoriesRepository {
             where: { id: id, ownerEmail: ownerEmail }
         })
     }
+
+    // public async findCategoriesByGroups(groupsIds: number[]): Promise<Category[]> {
+    // }
 }
 
 export default new CategoriesRepository();

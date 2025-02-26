@@ -11,8 +11,8 @@ type Category = {
     ownerEmail: string;
 }
 class CategoriesController {
-
     public async createCategory(req: Request, res: Response): Promise<any> {
+        console.log("Criando categoria")
         const data: categoryBase = req.body
 
         const newCategory = await categoriesServices.createCategory(data)
@@ -76,9 +76,8 @@ class CategoriesController {
     }
 
     public async getAllCategory(req: Request, res: Response): Promise<any> {
-        const { ownerEmail } = req.body;
-
-
+        console.log("bateu")
+        const { ownerEmail } = req.query;
         if (!ownerEmail || Array.isArray(ownerEmail) || typeof ownerEmail !== 'string') {
             return res.status(400).json({ error: "Owner email is required and must be a string" });
         }
@@ -92,6 +91,22 @@ class CategoriesController {
             return res.status(404).json({ error: "No category found" })
         }
         res.status(200).json({ category: response.category })
+    }
+
+    public async getGroupCategories(req: Request, res: Response): Promise<any> {
+        const { ownerEmail } = req.query;
+
+        if (!ownerEmail || Array.isArray(ownerEmail) || typeof ownerEmail !== 'string') {
+            return res.status(400).json({ error: "Owner email is required and must be a string" });
+        }
+
+        const response = await categoriesServices.getGroupCategories(ownerEmail);
+
+        if (response.error) {
+            return res.status(404).json({ error: response.error })
+        } else {
+            res.status(200).json({ categories: response.categories })
+        }
     }
 }
 
