@@ -11,16 +11,12 @@ class TaskRepository {
     }
 
     public async updateTask(id: number, data: Partial<Task>): Promise<Task> {
-        console.log("hora desatualizada")
-        console.log(data.dateTask)
         if (data.dateTask) {
             const dateTask = new Date(data.dateTask);
 
             const adjustedDate = new Date(dateTask.getTime() - (3 * 60 * 60 * 1000)); // Subtrai 3 horas
             data.dateTask = adjustedDate;
         }
-        console.log("hora atualizada")
-        console.log(data.dateTask)
         return await prisma.task.update({
             where: { id },
             data: data,
@@ -65,7 +61,6 @@ class TaskRepository {
     public async concludeTask(id: number): Promise<{ error?: string }> {
         const localDate = new Date(); 
         const adjustedDate = new Date(localDate.getTime() - (3 * 60 * 60 * 1000));
-        console.log(adjustedDate)
         await prisma.task.update({
             where: {
                 id,
@@ -113,7 +108,6 @@ class TaskRepository {
             }
         })
 
-        console.log("All tasks" + tasks[0])
 
         const category = await prisma.category.findUnique({
             where: {
@@ -221,12 +215,9 @@ class TaskRepository {
     }
 
     public async getTaskByDay(day: Date, email: string): Promise<Task[]> {
-        console.log(email)
         const endOfDay = new Date(day.setHours(23, 59, 59, 999));
         endOfDay.setUTCHours(23, 59, 59, 999);
 
-        console.log("inicio" + day)
-        console.log("fim " + endOfDay)
         const tasks = await prisma.task.findMany({
             where: {
                 dateTask: {
@@ -264,7 +255,6 @@ class TaskRepository {
             
             
         });
-        console.log("asdasdasdasd " + tasks.length)
         return tasks;
     }
 

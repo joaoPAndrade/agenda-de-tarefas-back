@@ -28,7 +28,6 @@ class TaskController {
     
     public async createTask(req: Request, res: Response): Promise<void> {
         const taskData = req.body;
-        console.log(taskData);
         const ownerEmail = taskData.ownerEmail;
 
         const result = await taskService.createTask(taskData, ownerEmail);
@@ -59,8 +58,6 @@ class TaskController {
 
     public async deleteTask(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
-        console.log(id)
-        console.log("BATEU")
 
         const intId = parseInt(id)
 
@@ -96,7 +93,6 @@ class TaskController {
     }
 
     public async concludeTask(req: Request, res: Response): Promise<void> {
-        console.log("concluindo")
         const { id } = req.params;
 
         const intId = parseInt(id);
@@ -112,7 +108,6 @@ class TaskController {
     }
 
     public async unconcludeTask(req: Request, res: Response): Promise<void>{
-        console.log("unconcluindo")
         const { id } = req.params;
 
         const intId = parseInt(id);
@@ -131,15 +126,12 @@ class TaskController {
     public async timeSpentOnActivity(req: Request, res: Response): Promise<void>{
 
         const { initialDate, finalDate, categoryId, userEmail} = req.body;
-        console.log("initialDate: " + initialDate)
-        console.log("finalDate: " + finalDate)
         const result = await taskService.timeSpentOnActivity(initialDate, finalDate, categoryId, userEmail)
 
 
         if(result.error){
             res.status(404).send({ error: result.error})
         } else {
-            console.log("result: " + result)
             res.status(200).send(result)
         }
 
